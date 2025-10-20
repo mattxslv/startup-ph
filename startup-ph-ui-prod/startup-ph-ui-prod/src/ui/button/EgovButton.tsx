@@ -6,6 +6,7 @@ import { useState } from 'react';
 const EgovButton = ({ onLinkClick }: { onLinkClick?: () => void }) => {
   const [query, setQuery] = useState<{ exchange_code: string }>({ exchange_code: '' });
   useAuthenticateViaSso(query);
+
   return (
     <div className='w-full flex items-center justify-center'>
       <EGovSSOWidget

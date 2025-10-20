@@ -20,6 +20,7 @@ const useAuthenticateViaSso = (query: any) => {
   const [error, setError] = useState<{ message: string } | null>(null);
   const mutator = useEGovSso();
   const router = useRouter();
+
   useEffect(() => {
     if (!query.exchange_code) {
       setError({
