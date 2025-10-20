@@ -1,0 +1,11 @@
+.react-daterange-picker__inputGroup {
+  min-width: auto;
+}
+
+.react-daterange-picker__wrapper {
+  border: none;
+}
+
+.react-daterange-picker {
+  flex-grow: 1;
+}

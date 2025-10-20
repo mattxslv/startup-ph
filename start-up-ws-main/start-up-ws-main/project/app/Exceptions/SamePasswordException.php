@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Exceptions;
+
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+
+class SamePasswordException extends Exception
+{
+    /**
+     * Render
+     *
+     * @return JsonResponse
+     */
+    public function render(): JsonResponse
+    {
+        return response()->json([
+            'message' => 'The new password cannot be the same as your current password.'
+        ], Response::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * Report
+     *
+     * @return void
+     */
+    public function report(): void
+    {
+        //
+    }
+}

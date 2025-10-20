@@ -1,0 +1,42 @@
+version: '3'
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: ./ops/docker/fpm/Dockerfile
+      target: develop
+    container_name: ${COMPOSE_PROJECT_NAME}-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: develop
+    working_dir: /var/www/html
+    volumes:
+      - ./project:/var/www/html
+      - /var/www/html/vendor
+    networks:
+      - app-local-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./ops/docker/nginx/Dockerfile
+      target: develop
+    container_name: ${COMPOSE_PROJECT_NAME}-nginx
+    environment:
+      SERVICE_NAME: nginx
+      SERVICE_TAGS: develop
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    networks:
+      - app-local-network
+
+networks:
+  app-local-network:
+    driver: bridge

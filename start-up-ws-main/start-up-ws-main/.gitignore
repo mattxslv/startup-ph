@@ -1,0 +1,9 @@
+/.idea
+/.vscode
+.env
+.vscode
+/data-*
+/project.dist
+secret.env
+NOTES
+TODO
