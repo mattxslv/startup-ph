@@ -31,16 +31,16 @@ function HomeHeader({}: Props) {
           <Image
             src="/images/logo.png"
             alt="StartUp Ph logo"
-            width={150}
-            height={70}
-            className="h-8 w-auto"
+            width={180}
+            height={85}
+            className="h-10 w-auto"
             priority
           />
         </Link>
 
         <div className="flex items-center gap-3 flex-1">
           <div className="ml-auto">
-            <ul className="hidden md:flex items-center gap-8 text-base font-medium">
+            <ul className="hidden md:flex items-center gap-8 text-base font-bold">
             <li>
               <Link className="relative transition-all duration-300 hover:text-blue-600 hover:scale-105 group cursor-pointer"
                  href="/">

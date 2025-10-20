@@ -4,45 +4,41 @@ import { HiSparkles, HiX } from 'react-icons/hi';
 function Tooltip({ show }: { show: boolean }) {
   if (!show) return null;
   return (
-    <div className="absolute -top-16 -right-3">
+    <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
       <div className="animate-bounce">
-        <div className="bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg w-auto whitespace-nowrap">
-          Try our eGov AI
+        <div className="bg-gray-800 text-white font-medium py-1 px-2 text-xs shadow-lg rounded whitespace-nowrap">
+          Try our<br />eGov AI
         </div>
-        <div className="absolute h-6 w-6 bg-gray-700 rounded rotate-45 translate-y-[-50%] left-[50%] translate-x-[calc(-50%+16px)]" />
+        <div className="absolute h-2 w-2 bg-gray-800 rotate-45 -bottom-1 left-1/2 transform -translate-x-1/2" />
       </div>
     </div>
   );
 }
-
-
 
 const AI_URL = 'https://chat-ai-poc.oueg.info/startup';
 
 function AiWidget() {
   const [showTooltip, setShowTooltip] = useState(true);
   const [show, setShow] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   if (!AI_URL) return null;
 
   return (
     <>
       {/* AI Chat Popup Window */}
       {show && (
-        <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-[9999] pointer-events-auto">
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">eGov AI Assistant</h3>
-            <button
-              onClick={() => setShow(false)}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              <HiX className="h-5 w-5" />
-            </button>
-          </div>
-          <div className="p-4 h-[calc(100%-4rem)]">
+        <div className="fixed bottom-24 right-6 w-[28rem] h-[36rem] bg-white rounded-2xl shadow-2xl border border-gray-200/80 z-[9999] pointer-events-auto backdrop-blur-sm">
+          <div className="relative h-full">
+            {!loaded && (
+              <div className="absolute inset-0 bg-white rounded-2xl flex items-center justify-center z-10">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            )}
             <iframe
-              className="border-none w-full h-full rounded"
+              className="border-none w-full h-full rounded-2xl"
               src={`${AI_URL}?long_answer=1`}
               title="chat widget"
+              onLoad={() => setLoaded(true)}
             />
           </div>
         </div>
