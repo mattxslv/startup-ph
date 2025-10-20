@@ -124,9 +124,6 @@ The platform integrates with various government systems:
 - Production data import
 - External API credential setup
 
-## 🤝 Contributing
-
-We welcome contributions from the developer community! Please see our contributing guidelines for details.
 
 ## 📄 License
 
