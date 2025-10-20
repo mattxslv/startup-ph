@@ -37,9 +37,9 @@ function Footer({}: Props) {
               {/* <img className="h-16" src="images/misc/dti-white.png" alt="" /> */}
             </div>
           </div>
-          <div>
+          <div className='text-center'>
             <div className='text-sm font-semibold mb-2'>IN PARTNERSHIP WITH</div>
-            <div className='flex items-center space-x-2'>
+            <div className='flex items-center justify-center space-x-4'>
               <img className='h-14' src='/images/misc/dost-white.png' alt='DOST Logo' />
               <img className='h-14' src='/images/misc/dti-white.png' alt='DTI Logo' />
             </div>

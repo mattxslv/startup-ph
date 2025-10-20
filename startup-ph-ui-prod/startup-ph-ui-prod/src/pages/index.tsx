@@ -16,7 +16,7 @@ export default function Home() {
     <>
       <CommonHead />
       <Aos once />
-      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-br-[33px] md:rounded-br-[172px] pt-7 pb-0 md:pb-28 space-y-16 overflow-hidden'>
+      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-br-[33px] md:rounded-br-[172px] pt-20 pb-0 md:pb-28 space-y-16 overflow-hidden'>
         <HomeHeader />
         <Banner />
       </div>
@@ -33,7 +33,7 @@ export default function Home() {
           {/* <div className="absolute bottom-0 left-0 z-[-1] h-[228px] w-[228px] rounded-full bg-[#A78BFA] blur-[200px]" />
           <div className="absolute bottom-0 left-0 z-[-1] h-[228px] w-[228px] rounded-full bg-[#F9A8D4] blur-[200px]" /> */}
         </div>
-        <Testimonials />
+        {/* <Testimonials /> */}
         <NewsFeed />
         <Faq />
         <Join />

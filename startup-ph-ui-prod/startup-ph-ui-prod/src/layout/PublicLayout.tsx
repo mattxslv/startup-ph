@@ -10,10 +10,12 @@ function PublicLayout({ children, withHead = true, withNav = true }: {
   return (
     <>
       {withHead ? <CommonHead /> : null}
-      {withNav ? <div className="pt-7 mb-12 relative z-10">
+      {withNav ? <div className="relative z-10">
         <HomeHeader />
       </div> : null}
-      {children}
+      <div className="pt-20">
+        {children}
+      </div>
     </>
   )
 }

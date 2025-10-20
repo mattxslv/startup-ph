@@ -30,6 +30,21 @@
   .testimonial-item {
     scroll-snap-align: start;
   }
+
+  /* Rainbow animation for buttons */
+  @keyframes rainbow {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-rainbow {
+    animation: rainbow 3s ease-in-out infinite;
+    background-size: 200% 200%;
+  }
 }
 
 .ql-editor {

@@ -12,7 +12,7 @@ function NewsLayout({ children }: { children: React.ReactNode }) {
   return (
     <HomeLayout>
       <div className='relative'>
-        <div className='container mx-auto relative z-10 pb-32'>
+        <div className='container mx-auto relative z-10'>
           {pathname !== '/news' && (
             <Button
               className='text-primary flex items-center mb-2'
@@ -31,31 +31,10 @@ function NewsLayout({ children }: { children: React.ReactNode }) {
                 <FitContent className='!relative md:absolute'>
                   <NewsHorizontalList />
                 </FitContent>
-                {/* <div className="text-center text-sm text-slate-500 mt-7">
-                  There are no more items.
-                </div> */}
               </div>
             </div>
           </div>
         </div>
-        <div className='absolute bottom-0'>
-          <img className='w-full' src='/images/misc/cloud-full.png' sizes='1400px' alt='' />
-        </div>
-      </div>
-      <div className='fixed flex items-end inset-0 z-0'>
-        <div className='absolute bottom-[50%] right-[50%] translate-x-[160%] z-[-1] h-[300px] w-[300px] rounded-full bg-highlight blur-[250px] opacity-80' />
-        <div className='absolute bottom-[20%] left-[50%] translate-x-[-100%] z-[-1] h-[600px] w-[600px] rounded-full bg-[#BBE7FF] blur-[250px] opacity-80' />
-        <div className='absolute top-[-10%] left-[50%] translate-x-[-160%] z-[-1] h-[300px] w-[300px] rounded-full bg-[#A78BFA] blur-[250px] opacity-80' />
-        <img
-          className='absolute top-44 right-0 h-72 w-72'
-          src='/images/how-it-works/dots.png'
-          alt=''
-        />
-        <img
-          className='absolute top-96 translate-x-[-40%] left-0 h-72 w-72'
-          src='/images/how-it-works/dots.png'
-          alt=''
-        />
       </div>
       <FooterNav />
     </HomeLayout>
