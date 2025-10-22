@@ -9,14 +9,14 @@ type Props = {};
 function Banner({}: Props) {
   const router = useRouter();
   return (
-    <div className='container mx-auto px-4 py-2 md:py-3'>
+    <div className='container mx-auto px-4 py-2 md:py-3 lg:-mt-8 xl:-mt-12'>
       {/* Main Hero Section */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-8'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-8 lg:items-start lg:pt-8'>
         {/* Content Side */}
-        <div className='space-y-2 text-center lg:text-left'>
+        <div className='space-y-2 text-center lg:text-left lg:mt-0'>
           {/* Official Badge and Main Heading - Closer Together */}
-          <div className='space-y-1'>
-            <div className='flex justify-center lg:justify-start'>
+          <div className='space-y-1 lg:space-y-2'>
+            <div className='flex justify-center lg:justify-start lg:-mb-2'>
               <div className='inline-flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 px-4 py-2 rounded-full text-sm font-medium'>
                 <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
                 <span>Official Government Portal</span>
@@ -24,7 +24,7 @@ function Banner({}: Props) {
             </div>
 
             {/* Main Heading */}
-            <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight'>
+            <h1 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight lg:leading-tight lg:-mt-1'>
               Empowering Filipino
               <span className='text-blue-600 block'>Startups & Innovators</span>
             </h1>
@@ -75,6 +75,45 @@ function Banner({}: Props) {
               <span>Free Support</span>
             </div>
           </div>
+
+          {/* Platform Features - Moved here */}
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-4'>
+            <div className='bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-blue-200'>
+              <div className='w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center mb-3'>
+                <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' />
+                </svg>
+              </div>
+              <h3 className='text-lg font-bold text-gray-900 mb-1'>Startup Directory</h3>
+              <p className='text-gray-600 text-xs'>
+                Comprehensive database of registered startups and business information
+              </p>
+            </div>
+
+            <div className='bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-red-200'>
+              <div className='w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center mb-3'>
+                <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+                </svg>
+              </div>
+              <h3 className='text-lg font-bold text-gray-900 mb-1'>Application Portal</h3>
+              <p className='text-gray-600 text-xs'>
+                Streamlined platform for government program applications and processing
+              </p>
+            </div>
+
+            <div className='bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-yellow-300'>
+              <div className='w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center mb-3'>
+                <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
+                </svg>
+              </div>
+              <h3 className='text-lg font-bold text-gray-900 mb-1'>Resource Library</h3>
+              <p className='text-gray-600 text-xs'>
+                Access government resources, guidelines, and program information
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Image Side */}
@@ -101,45 +140,6 @@ function Banner({}: Props) {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Platform Features */}
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-        <div className='bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-blue-200'>
-          <div className='w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center mb-3'>
-            <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' />
-            </svg>
-          </div>
-          <h3 className='text-lg font-bold text-gray-900 mb-1'>Startup Directory</h3>
-          <p className='text-gray-600 text-xs'>
-            Comprehensive database of registered startups and business information
-          </p>
-        </div>
-
-        <div className='bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-red-200'>
-          <div className='w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center mb-3'>
-            <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
-            </svg>
-          </div>
-          <h3 className='text-lg font-bold text-gray-900 mb-1'>Application Portal</h3>
-          <p className='text-gray-600 text-xs'>
-            Streamlined platform for government program applications and processing
-          </p>
-        </div>
-
-        <div className='bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-4 hover:shadow-lg transition-all cursor-pointer border border-amber-200'>
-          <div className='w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center mb-3'>
-            <svg className='w-5 h-5 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' />
-            </svg>
-          </div>
-          <h3 className='text-lg font-bold text-gray-900 mb-1'>Resource Library</h3>
-          <p className='text-gray-600 text-xs'>
-            Access government resources, guidelines, and program information
-          </p>
         </div>
       </div>
     </div>

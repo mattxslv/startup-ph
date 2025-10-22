@@ -16,7 +16,7 @@ export default function Home() {
     <>
       <CommonHead />
       <Aos once />
-      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-br-[33px] md:rounded-br-[172px] pt-1 pb-0 md:pb-28 space-y-16 overflow-hidden'>
+      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-b-[33px] md:rounded-b-[60px] pt-1 pb-0 md:pb-4 space-y-16 overflow-hidden'>
         <HomeHeader />
         <Banner />
       </div>
@@ -24,7 +24,7 @@ export default function Home() {
         {/* <div className="pt-4 md:pt-20">
           <Startup />
         </div> */}
-        <div className='relative mt-16 md:mt-32 space-y-16 md:space-y-32 pb-16 md:pb-32'>
+        <div className='relative mt-1 md:mt-0 space-y-4 md:space-y-6 pb-12 md:pb-16'>
           <SectionStartup />
           <SectionTarget />
           <div className='absolute bottom-[20%] right-[50%] translate-x-[160%] z-[-1] h-[228px] w-[228px] rounded-full bg-highlight blur-[190px] opacity-60' />

@@ -33,10 +33,10 @@ function SectionStartup({}: Props) {
   ];
 
   return (
-    <div className='bg-gray-50 py-16'>
+    <div className='py-8 md:py-12'>
       <div className='container mx-auto px-4'>
         {/* Section Header */}
-        <div className='text-center mb-16'>
+        <div className='text-center mb-8 md:mb-12'>
           <div className='inline-flex items-center gap-2 bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4'>
             <HiCheckCircle className='w-4 h-4 text-blue-600' />
             <span>Government Startup Program</span>
@@ -52,10 +52,10 @@ function SectionStartup({}: Props) {
         </div>
 
         {/* Main Content Grid */}
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16'>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16'>
           {/* Left Column - Image & Quick Stats */}
-          <div className='lg:col-span-1'>
-            <div className='relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl bg-white mb-8'>
+          <div className='flex flex-col gap-6'>
+            <div className='relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl bg-white'>
               <Image
                 className='object-contain object-center p-8'
                 src='/images/landing/banner-startup.png'
@@ -84,9 +84,9 @@ function SectionStartup({}: Props) {
             </div>
           </div>
 
-          {/* Right Columns - Support Programs */}
-          <div className='lg:col-span-2'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          {/* Right Column - Support Programs */}
+          <div className='flex flex-col'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 h-full'>
               {supportPrograms.map((program, index) => (
                 <div
                   key={index}

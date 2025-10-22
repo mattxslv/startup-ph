@@ -61,13 +61,24 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: start-up
+      MYSQL_DATABASE: startup_ph
       MYSQL_USER: admin
       MYSQL_PASSWORD: secret
+      # Optimizations for large database import
+      MYSQL_INNODB_BUFFER_POOL_SIZE: 2G
+      MYSQL_INNODB_LOG_FILE_SIZE: 256M
+      MYSQL_MAX_ALLOWED_PACKET: 1G
+    command: >
+      --max_allowed_packet=1073741824
+      --innodb_buffer_pool_size=2G
+      --innodb_log_file_size=256M
+      --innodb_flush_log_at_trx_commit=2
+      --innodb_flush_method=O_DIRECT
     ports:
       - "3306:3306"
     volumes:
       - data-mariadb:/var/lib/mysql
+      - ./dumps:/docker-entrypoint-initdb.d
     networks:
       - app-local-network
 
