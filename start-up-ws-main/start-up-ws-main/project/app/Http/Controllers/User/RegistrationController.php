@@ -21,9 +21,14 @@ class RegistrationController extends Controller
      */
     public function emailSignIn(UserEmailSignInRequest $request)
     {
-        (new UserAuthenticationService(new User()))->emailSignIn($request->get('email'));
-
-        return response()->json(['data' => $request->all()]);
+        try {
+            (new UserAuthenticationService(new User()))->emailSignIn($request->get('email'));
+            return response()->json(['data' => $request->all()]);
+        } catch (\Exception $e) {
+            \Log::error('Email sign in error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 400);
+        }
     }
 
     /**

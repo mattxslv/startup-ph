@@ -1,105 +1,155 @@
 import Image from 'next/image';
 import React from 'react';
-import { HiCheckCircle } from 'react-icons/hi';
+import { HiCheckCircle, HiDocumentText, HiCurrencyDollar, HiAcademicCap, HiBuildingOffice } from 'react-icons/hi2';
 
 type Props = {};
 
 function SectionStartup({}: Props) {
+  const supportPrograms = [
+    {
+      icon: HiDocumentText,
+      title: 'Startup Registration',
+      description: 'Official registration platform for Philippine startups and businesses',
+      color: 'bg-blue-700'
+    },
+    {
+      icon: HiCurrencyDollar,
+      title: 'Program Applications',
+      description: 'Apply for government startup programs and track application status',
+      color: 'bg-red-600'
+    },
+    {
+      icon: HiAcademicCap,
+      title: 'Resource Library',
+      description: 'Access government guidelines, forms, and startup-related information',
+      color: 'bg-amber-600'
+    },
+    {
+      icon: HiBuildingOffice,
+      title: 'Business Directory',
+      description: 'Connect with other startups and explore the Philippine startup ecosystem',
+      color: 'bg-blue-600'
+    }
+  ];
+
   return (
-    <div className='container mx-auto'>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16'>
-        <div
-          className='relative pt-[67%] md:pt-0'
-          aos-offset='0'
-          data-aos-delay='0'
-          disable-data-aos='zoom-in'
-        >
-          <Image
-            className='object-contain object-center'
-            src='/images/landing/banner-startup.png'
-            fill
-            sizes='540px'
-            alt='Startup'
-          />
-        </div>
-        <div className='space-y-6 text-center md:text-left'>
-          <h2
-            className='text-2xl md:text-5xl font-bold text-dark'
-            aos-offset='0'
-            data-aos-delay='0'
-            disable-data-aos='fade-right'
-          >
-            Kickstart your startup
-          </h2>
-          <p
-            className='text-muted font-medium leading-7'
-            aos-offset='0'
-            data-aos-delay='100'
-            disable-data-aos='fade-right'
-          >
-            We provide startups with resources, information, and expertise while developing the
-            entrepreneurial talent pool, and build successful startups through programs that
-            accelerate growth.
-          </p>
-          {/* <h2
-            className='text-2xl md:text-5xl font-bold text-dark'
-            aos-offset='0'
-            data-aos-delay='0'
-            disable-data-aos='fade-right'
-          >
-            Why choose us?
-          </h2> */}
-          <div className='text-left'>
-            <ul className='font-bold text-muted space-y-4'>
-              <li
-                className='flex space-x-1.5'
-                aos-offset='0'
-                data-aos-delay='0'
-                disable-data-aos='fade-up'
-              >
-                <span className='flex-shrink-0 p-1'>
-                  <HiCheckCircle className='text-success h-3.5 w-3.5' />
-                </span>
-                <span className='leading-7'>
-                  Gives makers access to a huge, global community of tech people and early adopters
-                </span>
-              </li>
-              <li
-                className='flex space-x-1.5'
-                aos-offset='0'
-                data-aos-delay='25'
-                disable-data-aos='fade-up'
-              >
-                <span className='flex-shrink-0 p-1'>
-                  <HiCheckCircle className='text-success h-3.5 w-3.5' />
-                </span>
-                <span className='leading-7'>
-                  Reach an audience of highly-engaged product lovers
-                </span>
-              </li>
-              <li
-                className='flex space-x-1.5'
-                aos-offset='0'
-                data-aos-delay='50'
-                disable-data-aos='fade-up'
-              >
-                <span className='flex-shrink-0 p-1'>
-                  <HiCheckCircle className='text-success h-3.5 w-3.5' />
-                </span>
-                <span className='leading-7'>
-                  Validate that the idea for a product is a good one/find product-market fit.
-                </span>
-              </li>
-            </ul>
+    <div className='bg-gray-50 py-16'>
+      <div className='container mx-auto px-4'>
+        {/* Section Header */}
+        <div className='text-center mb-16'>
+          <div className='inline-flex items-center gap-2 bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4'>
+            <HiCheckCircle className='w-4 h-4 text-blue-600' />
+            <span>Government Startup Program</span>
           </div>
-          {/* <p
-            className='text-muted font-medium leading-7'
-            aos-offset='0'
-            data-aos-delay='100'
-            disable-data-aos='fade-right'
-          >
-            Prepare for liftoff and embark on your entrepreneurial journey with us!
-          </p> */}
+          <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+            Everything You Need to
+            <span className='text-blue-600 block'>Start & Scale</span>
+          </h2>
+          <p className='text-gray-600 text-lg max-w-2xl mx-auto'>
+            The official government platform providing comprehensive support for Philippine startups,
+            from registration to program applications and resource access.
+          </p>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16'>
+          {/* Left Column - Image & Quick Stats */}
+          <div className='lg:col-span-1'>
+            <div className='relative h-80 md:h-96 rounded-2xl overflow-hidden shadow-xl bg-white mb-8'>
+              <Image
+                className='object-contain object-center p-8'
+                src='/images/landing/banner-startup.png'
+                fill
+                sizes='400px'
+                alt='Startup Support Programs'
+              />
+            </div>
+
+            {/* Quick Benefits */}
+            <div className='bg-white rounded-xl shadow-lg p-6 border border-gray-200'>
+              <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>Why Choose Government Support?</h3>
+              <ul className='space-y-3'>
+                {[
+                  'Official government registration platform',
+                  'Access to startup program applications',
+                  'Comprehensive resource library',
+                  'Connection to startup ecosystem'
+                ].map((benefit, index) => (
+                  <li key={index} className='flex items-start gap-3'>
+                    <HiCheckCircle className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
+                    <span className='text-sm text-gray-700'>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Right Columns - Support Programs */}
+          <div className='lg:col-span-2'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              {supportPrograms.map((program, index) => (
+                <div
+                  key={index}
+                  className='bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 group hover:-translate-y-1'
+                >
+                  <div className={`w-14 h-14 ${program.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <program.icon className='w-7 h-7 text-white' />
+                  </div>
+                  <h3 className='text-xl font-bold text-gray-900 mb-3'>{program.title}</h3>
+                  <p className='text-gray-600 text-sm leading-relaxed'>{program.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Platform Information */}
+        <div className='bg-white rounded-2xl shadow-xl p-8 border border-gray-200'>
+          <div className='text-center mb-8'>
+            <h3 className='text-2xl md:text-3xl font-bold text-gray-900 mb-2'>
+              Platform Information
+            </h3>
+            <p className='text-gray-600'>
+              Learn more about our government startup platform and available services
+            </p>
+          </div>
+
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+            <div className='space-y-4'>
+              <h4 className='text-lg font-bold text-gray-900'>Registration Process</h4>
+              <p className='text-gray-600 text-sm'>
+                Simple and secure registration process for startups looking to join the government platform.
+                Complete your business profile and get verified.
+              </p>
+            </div>
+            <div className='space-y-4'>
+              <h4 className='text-lg font-bold text-gray-900'>Program Applications</h4>
+              <p className='text-gray-600 text-sm'>
+                Apply for various government startup programs and track your application status
+                through our streamlined platform.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className='text-center mt-12'>
+          <div className='bg-gradient-to-r from-blue-700 to-red-600 rounded-2xl p-8 text-white'>
+            <h3 className='text-2xl md:text-3xl font-bold mb-4'>
+              Get Started Today
+            </h3>
+            <p className='text-blue-100 mb-6 text-lg'>
+              Join the Philippine startup ecosystem and access government resources
+            </p>
+            <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+              <button className='bg-white text-blue-700 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors'>
+                Register Now
+              </button>
+              <button className='border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-700 transition-colors'>
+                Learn More
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -20,10 +20,22 @@ interface IPayload<T> {
 
 const TIMEOUT = 30000;
 
+// Helper function to get cookie value
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return decodeURIComponent(parts.pop()?.split(';').shift() || '');
+  }
+  return null;
+}
+
 // Create main instance
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_END_POINT,
   timeout: TIMEOUT,
+  withCredentials: true, // Enable cookies for CSRF
   headers: {
     Accepts: 'application/json',
     'Content-Type': 'application/json',
@@ -48,6 +60,13 @@ const uploaderInstance = axios.create({
   instance.interceptors.request.use((config: any) => {
     const session = storage.get('_session', null);
     if (session?.token) config.headers.Authorization = `Bearer ${session?.token}`;
+    
+    // Add XSRF token from cookie to header
+    const xsrfToken = getCookie('XSRF-TOKEN');
+    if (xsrfToken) {
+      config.headers['X-XSRF-TOKEN'] = xsrfToken;
+    }
+    
     return config;
   });
 });
@@ -56,6 +75,15 @@ const uploaderInstance = axios.create({
 const getInstance = (isUpload?: boolean): AxiosInstance => {
   return isUpload ? uploaderInstance : instance;
 };
+
+// Helper function to get CSRF cookie
+async function getCsrfCookie(): Promise<void> {
+  try {
+    await instance.get('/sanctum/csrf-cookie');
+  } catch (error) {
+    console.error('Failed to fetch CSRF cookie:', error);
+  }
+}
 
 async function get<T>(
   { url, params, transform, isUpload }: IParams<T>,
@@ -87,6 +115,11 @@ async function post<T = unknown>(
   { url, payload, transform, isUpload }: IPayload<T>,
   config?: AxiosRequestConfig<any>
 ): Promise<T> {
+  // Get CSRF cookie before making POST request
+  if (!isUpload) {
+    await getCsrfCookie();
+  }
+  
   const axiosInstance = getInstance(isUpload);
   const raw = await axiosInstance.post(url, payload, config);
 

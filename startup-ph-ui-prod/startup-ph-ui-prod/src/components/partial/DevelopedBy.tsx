@@ -20,7 +20,7 @@ function DevelopedBy({}: Props) {
       </div>
       <div className='text-sm mb-2 flex flex-col items-center'>
         <div className='mb-2'>In partnership with:</div>
-        <div className='flex justify-center items-center space-x-4'>
+        <div className='flex justify-start items-center space-x-4'>
           <Image
             className='object-center object-contain'
             height={30}

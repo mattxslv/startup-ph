@@ -16,7 +16,7 @@ export default function Home() {
     <>
       <CommonHead />
       <Aos once />
-      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-br-[33px] md:rounded-br-[172px] pt-20 pb-0 md:pb-28 space-y-16 overflow-hidden'>
+      <div className='bg-gradient-to-r from-[#F4FAFF] to-[#E4EAFF] rounded-br-[33px] md:rounded-br-[172px] pt-1 pb-0 md:pb-28 space-y-16 overflow-hidden'>
         <HomeHeader />
         <Banner />
       </div>

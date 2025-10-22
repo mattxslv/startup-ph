@@ -40,7 +40,7 @@ class UserAuthenticationService
     public function emailSignIn(string $email)
     {
         if ($user = User::getByEmail($email)) {
-            Mail::to($user)->queue(new EmailRegistrationAttemptMail($user));
+            Mail::to($user)->send(new EmailRegistrationAttemptMail($user));
         }
 
         if (!$user) {

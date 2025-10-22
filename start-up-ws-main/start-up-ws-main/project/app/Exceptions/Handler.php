@@ -78,7 +78,7 @@ class Handler extends ExceptionHandler
                 throw new QueryException($e);
             }
 
-            // throw new GeneralException($e);
+            throw new GeneralException($e);
         });
     }
 }
