@@ -7,7 +7,12 @@ import { HiPencil } from 'react-icons/hi';
 import Image from 'next/image';
 
 const CustomBannerUpload = (props: any) => {
-  const { banner_url, onToggleMenu, MenuComponent, isShowMenu, progressPercentage, error } = props;
+  const { banner_url, onToggleMenu, MenuComponent, isShowMenu, progressPercentage, error, isUploading, progress } = props;
+  
+  // Use the passed progress or the old progressPercentage
+  const uploadProgress = progress !== null ? progress : progressPercentage;
+  const uploading = isUploading || progressPercentage;
+  
   useEffect(() => {
     if (!error) return;
     Toast.error(error);
@@ -19,10 +24,10 @@ const CustomBannerUpload = (props: any) => {
           onClick={onToggleMenu}
           className='text-white'
           variant='link'
-          leading={progressPercentage ? <CgSpinner className='animate-spin' /> : <HiPencil />}
+          leading={uploading ? <CgSpinner className='animate-spin' /> : <HiPencil />}
           size='xs'
         >
-          {progressPercentage ? `- ${formatNumber(progressPercentage, 1)}% -` : 'Upload Banner'}
+          {uploading ? `- ${formatNumber(uploadProgress || 0, 1)}% -` : 'Upload Banner'}
         </Button>
       </div>
       <button

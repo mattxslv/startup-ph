@@ -12,7 +12,7 @@ function Join({}: Props) {
       <div className="md:container mx-auto relative z-10">
         <div className="bg-[#1D4ED8] text-white md:rounded-2xl px-16 md:px-20 py-20 md:py-32 relative flex flex-col md:flex-row justify-between items-center overflow-hidden">
           <div className="relative z-10 text-center md:text-left mb-5 md:mb-0">
-            <div className="text-5xl font-bold mb-5 md:mb-2" aos-offset="0" data-aos-delay="0" disabled-data-aos="fade-right">Join Us!</div>
+            <div className="text-5xl font-bold mb-5 md:mb-2" aos-offset="0" data-aos-delay="0" disabled-data-aos="fade-right">Get Started Today</div>
             <div className="font-medium max-w-md" aos-offset="0" data-aos-delay="100" disabled-data-aos="fade-right">Help build a welcoming community that empowers entrepreneurs into making innovative products and services.</div>
           </div>
           <div

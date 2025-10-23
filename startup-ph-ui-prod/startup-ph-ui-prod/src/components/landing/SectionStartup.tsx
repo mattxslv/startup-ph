@@ -102,55 +102,6 @@ function SectionStartup({}: Props) {
             </div>
           </div>
         </div>
-
-        {/* Platform Information */}
-        <div className='bg-white rounded-2xl shadow-xl p-8 border border-gray-200'>
-          <div className='text-center mb-8'>
-            <h3 className='text-2xl md:text-3xl font-bold text-gray-900 mb-2'>
-              Platform Information
-            </h3>
-            <p className='text-gray-600'>
-              Learn more about our government startup platform and available services
-            </p>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-            <div className='space-y-4'>
-              <h4 className='text-lg font-bold text-gray-900'>Registration Process</h4>
-              <p className='text-gray-600 text-sm'>
-                Simple and secure registration process for startups looking to join the government platform.
-                Complete your business profile and get verified.
-              </p>
-            </div>
-            <div className='space-y-4'>
-              <h4 className='text-lg font-bold text-gray-900'>Program Applications</h4>
-              <p className='text-gray-600 text-sm'>
-                Apply for various government startup programs and track your application status
-                through our streamlined platform.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Call to Action */}
-        <div className='text-center mt-12'>
-          <div className='bg-gradient-to-r from-blue-700 to-red-600 rounded-2xl p-8 text-white'>
-            <h3 className='text-2xl md:text-3xl font-bold mb-4'>
-              Get Started Today
-            </h3>
-            <p className='text-blue-100 mb-6 text-lg'>
-              Join the Philippine startup ecosystem and access government resources
-            </p>
-            <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-              <button className='bg-white text-blue-700 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors'>
-                Register Now
-              </button>
-              <button className='border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-700 transition-colors'>
-                Learn More
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

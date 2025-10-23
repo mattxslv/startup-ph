@@ -13,7 +13,7 @@ function NewsFeed({}: Props) {
     <div className='relative'>
       <div className='container mx-auto py-10 md:py-28 space-y-8 md:space-y-10'>
         <div
-          className='bg-white p-6 rounded-none lg:rounded-lg relative'
+          className='bg-white p-6 rounded-none lg:rounded-lg shadow-lg relative'
           data-aos-delay='0'
           disabled-data-aos='fade-up'
         >

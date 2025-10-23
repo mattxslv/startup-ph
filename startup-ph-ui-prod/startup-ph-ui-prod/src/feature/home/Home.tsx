@@ -3,7 +3,8 @@ import React from 'react';
 import { HiUserAdd } from 'react-icons/hi';
 import DevelopedBy from '../../components/partial/DevelopedBy';
 import clsx from 'clsx';
-import FileUploader from '@/ui/file-uploader/FileUploader';
+// import FileUploader from '@/ui/file-uploader/FileUploader';
+import useFileUploader from '@/hooks/useFileUploader';
 import useMyStartup from '@/feature/startup/hooks/useMyStartup';
 import { useSaveStartup } from '@/feature/startup/hooks/useStartupMutate';
 import CustomBannerUpload from './components/CustomBannerUpload';
@@ -16,6 +17,7 @@ import Portfolio from './components/Portfolio';
 function Home() {
   const { isLoading, data } = useMyStartup();
   const mutator = useSaveStartup();
+  const [uploader, progress] = useFileUploader();
   const isVerifiable =
     data &&
     data.logo_url &&
@@ -45,20 +47,52 @@ function Home() {
 
   const canEdit = ['UNVERIFIED', 'FOR RESUBMISSION'].includes(data.status || '');
 
-  const handleChange = (e: any) => {
-    const { url } = e.target.value;
-    mutator.mutate({ payload: { ...data, banner_url: url } });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (20MB)
+    if (file.size > 20971520) {
+      alert('File size must be less than 20MB');
+      return;
+    }
+
+    // Validate file type
+    if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
+      alert('Only PNG, JPG, and JPEG files are allowed');
+      return;
+    }
+
+    // Upload file
+    uploader.mutate(
+      { payload: { file } },
+      {
+        onSuccess: (url: string) => {
+          mutator.mutate({ payload: { ...data, banner_url: url } });
+        },
+        onError: (error) => {
+          console.error('Upload failed:', error);
+          alert('Upload failed. Please try again.');
+        },
+      }
+    );
   };
 
   return (
     <div className=' sm:w-full mx-auto'>
-      <FileUploader
-        className='relative z-10'
-        file={data.banner_url ? { url: data.banner_url } : null}
-        onChange={handleChange}
-        customRender={<CustomBannerUpload banner_url={data.banner_url} />}
-        accept={['image/png', 'image/jpeg', 'image/jpg']}
-      />
+      <div className='relative z-10'>
+        <input
+          type='file'
+          accept='image/png,image/jpeg,image/jpg'
+          onChange={handleChange}
+          disabled={!canEdit || uploader.isLoading}
+          className='hidden'
+          id='banner-upload'
+        />
+        <label htmlFor='banner-upload' className={canEdit ? 'cursor-pointer' : 'cursor-default'}>
+          <CustomBannerUpload banner_url={data.banner_url} isUploading={uploader.isLoading} progress={progress} />
+        </label>
+      </div>
       <div className='flex flex-col gap-8 lg:px-20'>
         <HomeSectionContainer className='md:-mt-28'>
           <StartupInfo

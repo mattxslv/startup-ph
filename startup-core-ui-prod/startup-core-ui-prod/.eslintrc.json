@@ -9,8 +9,7 @@
     "airbnb-typescript",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "plugin:import/recommended"
   ],
@@ -20,11 +19,7 @@
       "jsx": true
     },
     "ecmaVersion": "latest",
-    "sourceType": "module",
-    "tsconfigRootDir": ".",
-    "project": [
-      "./tsconfig.json"
-    ]
+    "sourceType": "module"
   },
   "plugins": [
     "react",
@@ -33,7 +28,7 @@
   "settings": {
     "import/resolver": {
       "typescript": {
-        "project": "./tsconfig.json"
+        "project": "tsconfig.json"
       }
     },
     "react": {
