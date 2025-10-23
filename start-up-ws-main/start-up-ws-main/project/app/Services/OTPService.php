@@ -54,7 +54,7 @@ class OTPService
 
         Mail::to($this->user)
             ->locale(app()->getLocale())
-            ->queue(new $mailable($user, $this->generatePin()));
+            ->send(new $mailable($user, $this->generatePin()));
     }
 
     /**

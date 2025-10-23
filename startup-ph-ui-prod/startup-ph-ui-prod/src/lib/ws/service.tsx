@@ -37,7 +37,7 @@ const instance = axios.create({
   timeout: TIMEOUT,
   withCredentials: true, // Enable cookies for CSRF
   headers: {
-    Accepts: 'application/json',
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   },
   validateStatus: (status: number) => status >= 200,
@@ -79,7 +79,11 @@ const getInstance = (isUpload?: boolean): AxiosInstance => {
 // Helper function to get CSRF cookie
 async function getCsrfCookie(): Promise<void> {
   try {
-    await instance.get('/sanctum/csrf-cookie');
+    // Use base URL without /api/v2 for sanctum endpoint
+    console.log('Fetching CSRF cookie from:', `${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`);
+    await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+      withCredentials: true,
+    });
   } catch (error) {
     console.error('Failed to fetch CSRF cookie:', error);
   }

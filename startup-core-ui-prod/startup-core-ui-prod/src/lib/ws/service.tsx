@@ -1,19 +1,26 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from 'axios';
 import { throttle } from 'lodash';
 import { Toast } from 'ui/components';
 import storage from 'utils/storage';
 
-interface IParams<T> {
+interface IParams<T = unknown> {
   url: string;
-  params?: any;
+  // allow plain objects, FormData, URLSearchParams, etc.
+  params?: Record<string, any> | URLSearchParams | string | null;
   payload?: any;
-  transform?: (res: any) => T;
+  transform?: (res: AxiosResponse) => T;
 }
 
-interface IPayload<T> {
+interface IPayload<T = unknown> {
   url: string;
+  // payload can be object, FormData, string, etc.
   payload?: any;
-  transform?: (res: any) => T;
+  transform?: (res: AxiosResponse) => T;
 }
 
 const TIMEOUT = 30000;
@@ -22,15 +29,17 @@ const instance = axios.create({
   baseURL: import.meta.env.VITE_WS_ENDPOINT,
   timeout: TIMEOUT,
   headers: {
-    Accepts: 'application/json',
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   },
   validateStatus: (status: number) => status >= 200,
 });
 
-instance.interceptors.request.use((config: any) => {
+instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const session = storage.get('session', null);
-  if (session?.token) config.headers.Authorization = `Bearer ${session?.token}`;
+  if (session?.token) {
+    config.headers.set('Authorization', `Bearer ${session?.token}`);
+  }
   return config;
 });
 
@@ -40,7 +49,7 @@ const forceLogout = throttle(() => {
 }, 1000);
 
 instance.interceptors.response.use(
-  (res) => {
+  (res: AxiosResponse) => {
     if (res.status === 403 && res?.config?.method !== 'post') {
       if (res?.data?.message) Toast.error(res?.data?.message);
     }
@@ -58,9 +67,9 @@ instance.interceptors.response.use(
     }
     return res;
   },
-  (error) => {
+  (error: AxiosError) => {
     // console.warn('handle error!', error)
-    return error;
+    return Promise.reject(error);
   }
 );
 
@@ -75,7 +84,7 @@ async function get<T>(
     Toast.error('Not found!');
     throw Object.assign(new Error('Not found'), { not_found: true });
   }
-  return typeof transform === 'function' ? transform(raw) : (raw as T);
+  return typeof transform === 'function' ? transform(raw) : (raw.data as T);
 }
 
 async function post<T = unknown>(
@@ -103,7 +112,7 @@ async function post<T = unknown>(
     throw Object.assign(new Error('Unable to process'), {});
   }
 
-  return typeof transform === 'function' ? transform(raw) : (raw as T);
+  return typeof transform === 'function' ? transform(raw) : (raw.data as T);
 }
 
 async function put<T = unknown>(
@@ -121,7 +130,7 @@ async function put<T = unknown>(
     throw Object.assign(new Error('Unable to process'), {});
   }
 
-  return typeof transform === 'function' ? transform(raw) : (raw as T);
+  return typeof transform === 'function' ? transform(raw) : (raw.data as T);
 }
 
 async function patch<T = unknown>({
@@ -140,7 +149,7 @@ async function patch<T = unknown>({
     throw Object.assign(new Error('Unable to process'), {});
   }
 
-  return typeof transform === 'function' ? transform(raw) : (raw as T);
+  return typeof transform === 'function' ? transform(raw) : (raw.data as T);
 }
 
 async function remove<T = unknown>({
@@ -148,13 +157,15 @@ async function remove<T = unknown>({
   payload,
   transform,
 }: IPayload<T>): Promise<T> {
-  const raw = await instance.delete(url, payload);
+  // axios.delete takes (url, config). If a payload/body is provided, pass it as `data` in the config.
+  const cfg = payload ? { data: payload } : undefined;
+  const raw = await instance.delete(url, cfg as AxiosRequestConfig<any>);
   if (raw?.status >= 300) {
     Toast.error(raw?.data?.message || 'Unable to process');
     throw Object.assign(new Error('Unable to process'), {});
   }
 
-  return typeof transform === 'function' ? transform(raw) : (raw as T);
+  return typeof transform === 'function' ? transform(raw) : (raw.data as T);
 }
 
 export { get, post, put, patch, remove };

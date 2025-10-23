@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [
@@ -20,18 +19,44 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"],
-      "@components/*": ["src/components/*"],
-      "@ui/*": ["src/ui/*"],
-      "@layouts/*": ["src/layouts/*"],
-      "@utils/*": ["src/utils/*"],
-      "@lib/*": ["src/lib/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@feature/*": ["src/feature/*"],
-      "@layout/*": ["src/layout/*"],
-      "@pages/*": ["src/pages/*"],
-      "@validations/*": ["src/validations/*"]
+      "ui/*": [
+        "ui/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "utils/*": [
+        "utils/*"
+      ],
+      "components/*": [
+        "components/*"
+      ],
+      "context/*": [
+        "context/*"
+      ],
+      "features/*": [
+        "features/*"
+      ],
+      "hooks/*": [
+        "hooks/*"
+      ],
+      "layouts/*": [
+        "layouts/*"
+      ],
+      "pages/*": [
+        "pages/*"
+      ],
+      "types/*": [
+        "types/*"
+      ],
+      "validations/*": [
+        "validations/*"
+      ],
+      "assets/*": [
+        "assets/*"
+      ]
     }
   },
   "include": [
