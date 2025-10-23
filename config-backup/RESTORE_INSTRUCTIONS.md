@@ -9,9 +9,41 @@
 
 ## Setup Steps on Your Laptop:
 
+### Quick Setup (Copy-Paste All Commands)
+```powershell
+# 1. Navigate and pull
+cd Documents\DevSync\startupph
+git pull origin main
+
+# 2. Restore environment files
+Copy-Item .\config-backup\backend-docker.env -Destination .\start-up-ws-main\start-up-ws-main\.env
+Copy-Item .\config-backup\backend-laravel.env -Destination .\start-up-ws-main\start-up-ws-main\project\.env
+Copy-Item .\config-backup\frontend.env.local -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.env.local
+Copy-Item .\config-backup\.babelrc -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.babelrc
+
+# 3. Start Docker
+cd start-up-ws-main\start-up-ws-main
+docker-compose up -d
+
+# 4. Install backend dependencies
+docker exec start-up-ws-main-app php composer.phar install
+
+# 5. Setup database
+docker exec start-up-ws-main-app php artisan migrate:fresh --seed
+
+# 6. Install frontend dependencies
+cd ..\..\startup-ph-ui-prod\startup-ph-ui-prod
+npm install
+
+# 7. Start frontend
+npm run dev -- -p 3001
+```
+
+### Detailed Step-by-Step Instructions
+
 ### 1. Clone/Pull the Repository
 ```powershell
-cd Documents\DevSync
+cd Documents\DevSync\startupph
 git pull origin main
 ```
 
@@ -34,15 +66,26 @@ Copy-Item .\config-backup\.babelrc -Destination .\startup-ph-ui-prod\startup-ph-
 ```powershell
 cd start-up-ws-main\start-up-ws-main
 docker-compose up -d
+```
+
+### 4. Install Backend Dependencies
+```powershell
 docker exec start-up-ws-main-app php composer.phar install
-docker exec start-up-ws-main-app php artisan config:clear
+```
+
+### 5. Setup Database
+```powershell
 docker exec start-up-ws-main-app php artisan migrate:fresh --seed
 ```
 
-### 4. Start Frontend
+### 6. Install Frontend Dependencies
 ```powershell
-cd startup-ph-ui-prod\startup-ph-ui-prod
+cd ..\..\startup-ph-ui-prod\startup-ph-ui-prod
 npm install
+```
+
+### 7. Start Frontend
+```powershell
 npm run dev -- -p 3001
 ```
 
