@@ -39,14 +39,30 @@ class RegistrationController extends Controller
      */
     public function register(RegisterUserRequest $request)
     {
-        return DB::transaction(function () use ($request) {
-            (new OTPService(OTPEnum::REGISTRATION))->validate($request->get('email'), $request->get('pin'));
+        try {
+            \Log::info('Registration attempt started', ['email' => $request->get('email')]);
+            
+            return DB::transaction(function () use ($request) {
+                \Log::info('Inside transaction');
+                
+                (new OTPService(OTPEnum::REGISTRATION))->validate($request->get('email'), $request->get('pin'));
+                \Log::info('OTP validated');
 
-            if (!User::getByEmail($request->get('email'))) {
-                $token = (new UserAuthenticationService(User::create($request->validated())))->authenticate();
+                if (!User::getByEmail($request->get('email'))) {
+                    \Log::info('Creating new user');
+                    $token = (new UserAuthenticationService(User::create($request->validated())))->authenticate();
+                    \Log::info('User created and authenticated');
 
-                return response()->json(['token' => $token]);
-            }
-        });
+                    return response()->json(['token' => $token]);
+                }
+                
+                \Log::warning('User already exists');
+                return response()->json(['message' => 'User already exists'], 400);
+            });
+        } catch (\Exception $e) {
+            \Log::error('Registration error: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json(['message' => 'Registration failed: ' . $e->getMessage()], 500);
+        }
     }
 }
