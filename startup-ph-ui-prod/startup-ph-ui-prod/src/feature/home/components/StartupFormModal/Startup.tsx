@@ -83,14 +83,11 @@ const Startup = ({ onClose }: IProps) => {
           />
 
           <div className='flex gap-5'>
-            <InputMask
+            <Input
               name='registration_no'
-              label='Registration/Certification Permit Number *'
-              mask='999999999'
-              placeholder='XXXXXXXXXX'
-              note='Please ensure
-          that your registration/certificate/permit number is aligned with your
-          proof of registration.'
+              label='DTI/SEC Registration Number *'
+              placeholder='Enter DTI or SEC number'
+              note='Please enter your DTI Registration Number or SEC Number. Ensure this matches your proof of registration document.'
               required
             />
 
@@ -126,11 +123,11 @@ const Startup = ({ onClose }: IProps) => {
           />
 
           <div className='flex items-center justify-end gap-4 mt-5'>
-            <Button variant='link' onClick={onClose}>
+            <Button variant='link' onClick={onClose} disabled={mutator.isLoading}>
               Cancel
             </Button>
-            <Button variant='primary' type='submit' disabled={!dirty}>
-              Save
+            <Button variant='primary' type='submit' disabled={!dirty || mutator.isLoading}>
+              {mutator.isLoading ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </>

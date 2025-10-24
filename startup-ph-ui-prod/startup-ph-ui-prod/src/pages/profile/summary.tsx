@@ -90,7 +90,7 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
       description: sessionStorage.getItem('description') || '',
       founding_year: sessionStorage.getItem('founding_year') || '',
       id: '',
-      logo_url: '',
+      logo_url: 'https://via.placeholder.com/150', // Provide default logo URL
       region_code: sessionStorage.getItem('region_code') || '',
       province_code: sessionStorage.getItem('province_code') || '',
       municipality_code: sessionStorage.getItem('municipality_code') || '',
@@ -102,12 +102,12 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
       social_instagram_url: '',
       social_facebook_url: '',
       social_linkedin_url: '',
-      business_classification: '',
-      development_phase: '',
+      business_classification: 'Startup', // Provide default value
+      development_phase: 'Early Stage', // Provide default value
       tin: '',
       status: 'VERIFIED',
-      banner_url: '',
-      body: undefined,
+      banner_url: 'https://via.placeholder.com/800x400',
+      body: [{ type: 'RICHTEXT', content: sessionStorage.getItem('description') || 'Default startup description' }],
     };
 
     mutator.mutate(
@@ -218,11 +218,11 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
         <Button
           className='ml-auto md:ml-0'
           variant='primary'
-          trailing={<HiCheck />}
+          trailing={mutator.isLoading ? null : <HiCheck />}
           onClick={handleSubmit}
-          disabled={mutator.isLoading}
+          disabled={mutator.isLoading || mutator2.isLoading}
         >
-          Confirm
+          {mutator.isLoading || mutator2.isLoading ? 'Processing...' : 'Confirm'}
         </Button>
       </div>
     </AuthWrapper>

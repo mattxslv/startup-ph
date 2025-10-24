@@ -79,7 +79,7 @@ const Funding = ({ onClose }: IProps) => {
           will not be shared publicly.
         </p>
 
-        <FundingForm onClose={onClose} />
+        <FundingForm onClose={onClose} mutator={mutator} />
       </>
     </Form>
   );
@@ -87,7 +87,7 @@ const Funding = ({ onClose }: IProps) => {
 
 export default Funding;
 
-const FundingForm = ({ onClose }: IProps) => {
+const FundingForm = ({ onClose, mutator }: IProps & { mutator: any }) => {
   const { values, setFieldValue, errors, dirty } = useFormContext();
   const fundingList = values['fundings'];
   const hasFunding = values['has_funding'];
@@ -223,11 +223,11 @@ const FundingForm = ({ onClose }: IProps) => {
       ) : null}
 
       <div className='flex items-center justify-end gap-4 mt-5'>
-        <Button variant='link' onClick={onClose}>
+        <Button variant='link' onClick={onClose} disabled={mutator.isLoading}>
           Cancel
         </Button>
-        <Button variant='primary' type='submit' disabled={!dirty}>
-          Save
+        <Button variant='primary' type='submit' disabled={!dirty || mutator.isLoading}>
+          {mutator.isLoading ? 'Saving...' : 'Save'}
         </Button>
       </div>
     </>

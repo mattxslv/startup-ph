@@ -53,7 +53,12 @@ export const StartUpFields = () => {
           required
         />
         <Input name='name' label='Startup Name' required />
-        <Input name='business_name' label='Registered Business/SEC Name' />
+        <Input 
+          name='business_name' 
+          label='Corporation/Business Name (Legal Entity)' 
+          placeholder='Enter official DTI/SEC registered name'
+          note='Enter the official corporation or business name as registered with DTI/SEC if different from your startup name'
+        />
         <Input name='founder_name' label='Founder' required />
         <InputMask name='founding_year' label='Founding Year' mask='9999' required type='tel' />
         <InputMask
@@ -62,14 +67,11 @@ export const StartUpFields = () => {
           mask='999-999-999-999'
           placeholder='XXX-XXX-XXX-000'
         />
-        <InputMask
+        <Input
           name='registration_no'
-          label='Registration/Certification Permit Number'
-          mask='999999999'
-          placeholder='XXXXXXXXXX'
-          note='Please ensure
-          that your registration/certificate/permit number is aligned with your
-          proof of registration.'
+          label='DTI/SEC Registration Number'
+          placeholder='Enter DTI or SEC number'
+          note='Please enter your DTI Registration Number or SEC Number. Ensure this matches your proof of registration document.'
         />
         <div className='md:col-span-2 space-y-2'>
           <InputAddressPSGC />

@@ -34,13 +34,13 @@ export interface IProfile {
 }
 
 export const GENDER_OPTIONS = [
-  { label: 'Preferred not to say', value: '' },
+  { label: 'Preferred not to say', value: 'Preferred not to say' },
   { label: 'Male', value: 'M' },
   { label: 'Female', value: 'F' },
 ];
 
 export const EXTENSION_NAMES = [
-  { label: 'N/A', value: '' },
+  { label: 'N/A', value: 'N/A' },
   { label: 'JR', value: 'JR' },
   { label: 'SR', value: 'SR' },
   { label: 'II', value: 'II' },

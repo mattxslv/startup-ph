@@ -21,7 +21,7 @@ const FileUploader = ({
   disabled,
   placeholder,
   accept,
-  maxFileSize = 5242880, // Default 5mb
+  maxFileSize = 26214400, // Default 25mb
   file,
   onChange,
   handleDelete,

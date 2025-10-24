@@ -22,25 +22,34 @@ interface BasicInfoProps {
 
 export const BasicInfo = ({ data, canEdit }: BasicInfoProps) => (
   <div className='flex items-center'>
-    <div className='flex-shrink-0 mr-4'>
-      {data?.logo_url ? (
+    <div className='flex-shrink-0 mr-6'>
+      {data?.logo_url && !data.logo_url.includes('placeholder.com') ? (
         <Image
-          className='h-20 w-20 lg:h-32 lg:w-32 rounded-full bg-gray-400 object-center object-contain'
+          className='h-20 w-20 lg:h-32 lg:w-32 rounded-full bg-gray-100 object-center object-cover border-4 border-white shadow-md'
           width={80}
           height={80}
           src={data.logo_url}
-          alt={data.name}
+          alt={data.name || 'Startup Logo'}
         />
       ) : (
-        <div className='text-xs p-3 bg-gray-100 h-20 w-20 lg:h-32 lg:w-32 flex items-center justify-center rounded-md text-muted'>
-          No Logo
+        <div 
+          key="startup-placeholder" 
+          className='h-20 w-20 lg:h-32 lg:w-32 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 border-4 border-white shadow-md flex items-center justify-center relative overflow-hidden'
+        >
+          {/* Background pattern */}
+          <div className='absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent'></div>
+          
+          {/* Building icon placeholder */}
+          <div className='text-blue-600 text-2xl lg:text-4xl relative z-10'>
+            🏢
+          </div>
         </div>
       )}
     </div>
     <div className='flex flex-col grow'>
       <div className='flex gap-5 items-center mb-2'>
         <div className='text-base font-bold text-dark flex flex-col md:flex-row gap-2'>
-          <p className='text-lg'>{data.name}</p>
+          <p className='text-xl lg:text-2xl font-bold text-gray-900'>{data.name}</p>
 
           <StartupBadgeAction data={data} />
 
@@ -69,7 +78,7 @@ export const BasicInfo = ({ data, canEdit }: BasicInfoProps) => (
 
         {canEdit ? (
           <Button
-            className='ml-auto'
+            className='ml-auto hover:bg-gray-100 transition-colors'
             variant='link'
             leading={<HiPencil />}
             size='xs'
@@ -81,7 +90,9 @@ export const BasicInfo = ({ data, canEdit }: BasicInfoProps) => (
           <span />
         )}
       </div>
-      <div className='text-xs font-semibold text-blue-600'>Startup ID: {data.startup_number}</div>
+      <div className='text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-block w-fit'>
+        Startup ID: {data.startup_number || data.id || 'Not assigned'}
+      </div>
     </div>
   </div>
 );
@@ -91,15 +102,23 @@ interface SectorInfoProps {
 }
 
 export const SectorInfo = ({ data }: SectorInfoProps) => (
-  <div className='space-y-4'>
-    <Info icon='/images/icons/icon-1.png' label='Startup Sector'>
-      <BadgeArray list={data.sectors} />
-    </Info>
-    <Info icon='/images/icons/icon-2.png' label='Startup Development Phase'>
-      {data.development_phase || '-'}
-    </Info>
-    <InfoColumn label='Short Description'>{data.short_description || '-'}</InfoColumn>
-    <InfoColumn label='Description'>{data.description || '-'}</InfoColumn>
+  <div className='space-y-5'>
+    <div className='p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100'>
+      <Info icon='/images/icons/icon-1.png' label='Startup Sector'>
+        <BadgeArray list={data.sectors} />
+      </Info>
+    </div>
+    <div className='p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100'>
+      <Info icon='/images/icons/icon-2.png' label='Startup Development Phase'>
+        {data.development_phase || '-'}
+      </Info>
+    </div>
+    <div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+      <InfoColumn label='Short Description'>{data.short_description || '-'}</InfoColumn>
+    </div>
+    <div className='p-4 bg-gray-50 rounded-lg border border-gray-200'>
+      <InfoColumn label='Description'>{data.description || '-'}</InfoColumn>
+    </div>
   </div>
 );
 
@@ -109,12 +128,12 @@ interface ContactInfoProps {
 }
 
 export const ContactInfo = ({ data, canEdit }: ContactInfoProps) => (
-  <>
-    <div className='flex items-center justify-between gap-4'>
-      <p className='text-sm font-semibold'>Contact Information</p>
+  <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
+    <div className='flex items-center justify-between gap-4 mb-5'>
+      <p className='text-xl font-bold text-gray-900'>Contact Information</p>
       {canEdit && (
         <Button
-          className='ml-auto'
+          className='ml-auto hover:bg-gray-100 transition-colors'
           variant='link'
           leading={<HiPencil />}
           size='xs'
@@ -124,16 +143,18 @@ export const ContactInfo = ({ data, canEdit }: ContactInfoProps) => (
         </Button>
       )}
     </div>
-    <Info icon='/images/icons/icon-3.png' label='Founder'>
-      {data.founder_name || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-4.png' label='Business Contact Number'>
-      {data.business_mobile_no || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-5.png' label='Business Address'>
-      {data.display_address || '-'}
-    </Info>
-  </>
+    <div className='space-y-4'>
+      <Info icon='/images/icons/icon-3.png' label='Founder'>
+        {data.founder_name || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-4.png' label='Business Contact Number'>
+        {data.business_mobile_no || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-5.png' label='Business Address'>
+        {data.display_address || '-'}
+      </Info>
+    </div>
+  </div>
 );
 
 interface BusinessInfoProps {
@@ -142,13 +163,13 @@ interface BusinessInfoProps {
 }
 
 export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
-  <>
-    <div className='flex flex-col'>
+  <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
+    <div className='flex flex-col mb-5'>
       <div className='flex items-center justify-between gap-4'>
-        <p className='text-sm font-semibold'>Startup Information</p>
+        <p className='text-xl font-bold text-gray-900'>Startup Information</p>
         {canEdit ? (
           <Button
-            className='ml-auto'
+            className='ml-auto hover:bg-gray-100 transition-colors'
             variant='link'
             leading={<HiPencil />}
             size='xs'
@@ -159,44 +180,46 @@ export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
         ) : null}
       </div>
 
-      <small className='text-gray-400'>
+      <small className='text-gray-500 mt-2'>
         This section contains important details about your startup, including registration and
         funding information. It is only visible to you and will not be shared publicly.
       </small>
     </div>
 
-    <Info icon='/images/icons/icon-6.png' label='Registered Business/SEC Name'>
-      {data.business_name || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-7.png' label='Founding Year'>
-      {data.founding_year || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-8.png' label='Business Classification'>
-      {data.business_classification || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-9.png' label='Tax Identification Number'>
-      {data.tin || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-10.png' label='Registration/Certification Permit Number'>
-      {data.registration_no || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-11.png' label='Business Expiration Year'>
-      {data.business_certificate_expiration_date || '-'}
-    </Info>
-    <Info icon='/images/icons/icon-12.png' label='Proof of Registration'>
-      {data.proof_of_registration_url ? (
-        <Link
-          target='_blank'
-          href={data.proof_of_registration_url}
-          className='text-primary flex items-center gap-1'
-        >
-          <span>Proof of Registration</span> <HiEye />
-        </Link>
-      ) : (
-        '-'
-      )}
-    </Info>
-  </>
+    <div className='space-y-4'>
+      <Info icon='/images/icons/icon-6.png' label='Registered Business/SEC Name'>
+        {data.business_name || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-7.png' label='Founding Year'>
+        {data.founding_year || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-8.png' label='Business Classification'>
+        {data.business_classification || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-9.png' label='Tax Identification Number'>
+        {data.tin || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-10.png' label='Registration/Certification Permit Number'>
+        {data.registration_no || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-11.png' label='Business Expiration Year'>
+        {data.business_certificate_expiration_date || '-'}
+      </Info>
+      <Info icon='/images/icons/icon-12.png' label='Proof of Registration'>
+        {data.proof_of_registration_url ? (
+          <Link
+            target='_blank'
+            href={data.proof_of_registration_url}
+            className='text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium transition-colors'
+          >
+            <span>Proof of Registration</span> <HiEye />
+          </Link>
+        ) : (
+          '-'
+        )}
+      </Info>
+    </div>
+  </div>
 );
 
 interface FundingInfoProps {
@@ -205,13 +228,13 @@ interface FundingInfoProps {
 }
 
 export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
-  <>
-    <div className='flex flex-col'>
+  <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
+    <div className='flex flex-col mb-5'>
       <div className='flex items-center justify-between gap-4'>
-        <p className='text-sm font-semibold'>Funding Information</p>
+        <p className='text-xl font-bold text-gray-900'>Funding Information</p>
         {canEdit ? (
           <Button
-            className='ml-auto'
+            className='ml-auto hover:bg-gray-100 transition-colors'
             variant='link'
             leading={<HiPencil />}
             size='xs'
@@ -222,29 +245,31 @@ export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
         ) : null}
       </div>
 
-      <small className='text-gray-400'>
+      <small className='text-gray-500 mt-2'>
         This section contains important details about your startup. It is only visible to you and
         will not be shared publicly.
       </small>
     </div>
 
-    {!isEmpty(data.fundings) ? (
-      data.fundings.map((funding, index) => (
-        <Info icon='' label={`Funding Agency ${index + 1}`} key={funding.agency}>
-          {funding.document_urls.map((url) => (
-            <div className='flex items-center gap-3' key={url}>
-              {funding.agency}
-              <Link target='_blank' href={url} className='text-primary flex items-center gap-1'>
-                View Attachment <HiEye />
-              </Link>
-            </div>
-          ))}
-        </Info>
-      ))
-    ) : (
-      <p className='text-sm text-muted'>No Available Funding Agency.</p>
-    )}
-  </>
+    <div className='space-y-4'>
+      {!isEmpty(data.fundings) ? (
+        data.fundings.map((funding, index) => (
+          <Info icon='' label={`Funding Agency ${index + 1}`} key={funding.agency}>
+            {funding.document_urls.map((url) => (
+              <div className='flex items-center gap-3' key={url}>
+                {funding.agency}
+                <Link target='_blank' href={url} className='text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium transition-colors'>
+                  View Attachment <HiEye />
+                </Link>
+              </div>
+            ))}
+          </Info>
+        ))
+      ) : (
+        <p className='text-base text-gray-500 italic'>No Available Funding Agency.</p>
+      )}
+    </div>
+  </div>
 );
 
 interface SocialMediaInfoProps {
@@ -261,12 +286,12 @@ export const SocialMediaInfo = ({ canEdit, data }: SocialMediaInfoProps) => {
   }).some((url) => url?.trim());
 
   return (
-    <>
-      <div className='flex items-center justify-between gap-4'>
-        <p className='text-sm font-semibold'>Web & Social Media's</p>
+    <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
+      <div className='flex items-center justify-between gap-4 mb-5'>
+        <p className='text-xl font-bold text-gray-900'>Web & Social Media's</p>
         {canEdit ? (
           <Button
-            className='ml-auto'
+            className='ml-auto hover:bg-gray-100 transition-colors'
             variant='link'
             leading={<HiPencil />}
             size='xs'
@@ -282,9 +307,9 @@ export const SocialMediaInfo = ({ canEdit, data }: SocialMediaInfoProps) => {
           <SocialMedia data={data} />
         </div>
       ) : (
-        <p className='text-sm text-muted'>No Available Social Media/s.</p>
+        <p className='text-base text-gray-500 italic'>No Available Social Media/s.</p>
       )}
-    </>
+    </div>
   );
 };
 

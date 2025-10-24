@@ -17,6 +17,8 @@ const CustomBannerUpload = (props: any) => {
     if (!error) return;
     Toast.error(error);
   }, [error]);
+  
+  // Updated banner placeholder design
   return (
     <div className='relative pt-[34%] md:pt-[28%] bg-gray-400'>
       <div className='absolute top-0 right-0 bg-black/20 rounded-bl-lg z-20'>
@@ -27,7 +29,11 @@ const CustomBannerUpload = (props: any) => {
           leading={uploading ? <CgSpinner className='animate-spin' /> : <HiPencil />}
           size='xs'
         >
-          {uploading ? `- ${formatNumber(uploadProgress || 0, 1)}% -` : 'Upload Banner'}
+          {uploading 
+            ? `- ${formatNumber(uploadProgress || 0, 1)}% -` 
+            : banner_url 
+              ? '' 
+              : 'Upload Banner'}
         </Button>
       </div>
       <button
@@ -42,13 +48,18 @@ const CustomBannerUpload = (props: any) => {
               fill
               src={banner_url}
               sizes='1200px'
-              alt=''
+              alt='Banner'
             />
           </div>
         ) : (
-          <span className='m-auto text-xl text-center font-light tracking-tighter text-white'>
-            Upload Banner
-          </span>
+          <div className='w-full h-full flex items-center justify-center bg-gradient-to-r from-gray-500 to-gray-600'>
+            <div className='text-center'>
+              <HiPencil className='w-12 h-12 mx-auto mb-2 text-white/60' />
+              <span className='text-xl font-light tracking-tight text-white/80'>
+                Upload Banner
+              </span>
+            </div>
+          </div>
         )}
       </button>
       <div className='absolute top-10 right-10 w-32'>{isShowMenu ? MenuComponent : null}</div>

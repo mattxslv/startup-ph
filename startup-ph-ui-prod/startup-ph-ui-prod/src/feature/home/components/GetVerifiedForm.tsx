@@ -5,6 +5,7 @@ import { TStartup } from '../../startup/types';
 import { FormikHelpers } from 'formik';
 import InputDatasetSelect from '../../dataset/InputDatasetSelect';
 import InputMask from '@/ui/form/InputMask';
+import Input from '@/ui/form/Input';
 import Button from '@/ui/button/Button';
 import { showOathModal } from '@/components/partial/oath';
 import { showConsentModal } from '@/components/partial/consent';
@@ -42,14 +43,11 @@ export const GetVerifiedFields = () => {
         placeholder='XXX-XXX-XXX-000'
         required
       />
-      <InputMask
+      <Input
         name='registration_no'
-        label='Registration/Certification Permit Number'
-        mask='999999999'
-        placeholder='XXXXXXXXXX'
-        note='Please ensure
-          that your registration/certificate/permit number is aligned with your
-          proof of registration.'
+        label='DTI/SEC Registration Number'
+        placeholder='Enter DTI or SEC number'
+        note='Please enter your DTI Registration Number or SEC Number. Ensure this matches your proof of registration document.'
         required
       />
       <InputDatasetSelect
@@ -57,12 +55,32 @@ export const GetVerifiedFields = () => {
         name='business_classification'
         label='Business Classification'
         required
+        fallbackOptions={[
+          { label: 'Service Provider', value: 'Service Provider' },
+          { label: 'Manufacturing', value: 'Manufacturing' },
+          { label: 'Technology', value: 'Technology' },
+          { label: 'Retail/E-commerce', value: 'Retail/E-commerce' },
+          { label: 'Food & Beverage', value: 'Food & Beverage' },
+          { label: 'Healthcare', value: 'Healthcare' },
+          { label: 'Education', value: 'Education' },
+          { label: 'Agriculture', value: 'Agriculture' },
+          { label: 'Finance', value: 'Finance' },
+          { label: 'Other', value: 'Other' }
+        ]}
       />
       <InputDatasetSelect
         code='development-phase'
         name='development_phase'
         label='Development Phase'
         required
+        fallbackOptions={[
+          { label: 'Ideation Stage', value: 'Ideation Stage' },
+          { label: 'Validation Stage', value: 'Validation Stage' },
+          { label: 'Early Stage', value: 'Early Stage' },
+          { label: 'Growth Stage', value: 'Growth Stage' },
+          { label: 'Expansion Stage', value: 'Expansion Stage' },
+          { label: 'Maturity Stage', value: 'Maturity Stage' }
+        ]}
       />
 
       <InputFileV2
@@ -82,7 +100,7 @@ export const GetVerifiedFields = () => {
             Choose file to upload
           </div>
         }
-        note='*PDF, JPG, PNG, DOCX (max. 5mb)'
+        note='*PDF, JPG, PNG, DOCX (max. 25mb)'
         inputLabel='Upload Proof or Registration/Government Accreditation'
         className='w-40'
         required
@@ -109,6 +127,7 @@ function GetVerifiedForm({ onClose }: Props) {
   const resubmitor = useResubmitStartup();
 
   const handleSubmit = (payload: TStartup, { setErrors }: FormikHelpers<TStartup>) => {
+    console.log('🚀 GetVerified Form Payload:', payload);
     const args = {
       onSuccess: () => {
         onClose();
@@ -116,9 +135,12 @@ function GetVerifiedForm({ onClose }: Props) {
         showVerifySuccessModal();
       },
       onError: (err: any) => {
+        console.log('🚨 GetVerified Form Error:', err);
         if (err?.status === 422) {
           Toast.error(err?.message);
           setErrors(err?.errors);
+        } else {
+          Toast.error(err?.message || 'Something went wrong. Please try again later.');
         }
       },
     };
@@ -141,10 +163,24 @@ function GetVerifiedForm({ onClose }: Props) {
       : submitor.mutate({ payload }, args);
   };
 
+  const initialValues = {
+    // Required fields for verification
+    tin: data?.tin || '',
+    registration_no: data?.registration_no || '',
+    business_classification: data?.business_classification || '',
+    development_phase: data?.development_phase || '',
+    proof_of_registration_url: data?.proof_of_registration_url || '',
+    // Include all other existing startup data
+    ...data,
+  };
+
+  console.log('🚀 GetVerified Initial Values:', initialValues);
+  console.log('🚀 MyStartup Data:', data);
+
   return (
     <Form
       className='flex-1 flex flex-col'
-      initialValues={data}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >

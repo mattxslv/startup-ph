@@ -2,6 +2,7 @@ import InputSelect from './InputSelect';
 import Input from './Input';
 import useAddressList from '@/hooks/useAddressList';
 import { useFormContext } from './hooks';
+import { useEffect, useMemo } from 'react';
 
 const filter = {
   per_page: 10000,
@@ -11,19 +12,53 @@ const filter = {
 
 const InputAddressPSGC = () => {
   const { values, setFieldValue } = useFormContext();
+  
+  const regionCode = values['region_code'];
+  const provinceCode = values['province_code'];
+  const municipalityCode = values['municipality_code'];
+  
   const { data: regions } = useAddressList('regions', filter);
   const { data: provinces } = useAddressList('provinces', {
-    region_code: values['region_code'],
+    region_code: regionCode,
     ...filter,
   });
   const { data: municipalities } = useAddressList('municipalities', {
-    province_code: values['province_code'],
+    province_code: provinceCode,
     ...filter,
   });
   const { data: barangays } = useAddressList('barangays', {
-    municipality_code: values['municipality_code'],
+    municipality_code: municipalityCode,
     ...filter,
   });
+
+  const provincesList = useMemo(() => provinces?.list || [], [provinces?.list]);
+  const municipalitiesList = useMemo(() => municipalities?.list || [], [municipalities?.list]);
+
+  // Watch for province changes and validate it belongs to the selected region
+  useEffect(() => {
+    if (provinceCode && regionCode && provincesList.length > 0) {
+      const selectedProvince = provincesList.find(p => p.code === provinceCode);
+      // If the selected province is not in the current region's list, clear it
+      if (!selectedProvince) {
+        setFieldValue('province_code', '');
+        setFieldValue('municipality_code', '');
+        setFieldValue('barangay_code', '');
+      }
+    }
+  }, [regionCode, provincesList, provinceCode, setFieldValue]);
+
+  // Watch for municipality changes and validate it belongs to the selected province
+  useEffect(() => {
+    if (municipalityCode && provinceCode && municipalitiesList.length > 0) {
+      const selectedMunicipality = municipalitiesList.find(m => m.code === municipalityCode);
+      // If the selected municipality is not in the current province's list, clear it
+      if (!selectedMunicipality) {
+        setFieldValue('municipality_code', '');
+        setFieldValue('barangay_code', '');
+      }
+    }
+  }, [provinceCode, municipalitiesList, municipalityCode, setFieldValue]);
+
   const clearValue = (changedField: string) => {
     switch (changedField) {
       case 'region_code':

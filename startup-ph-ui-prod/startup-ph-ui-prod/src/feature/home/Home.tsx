@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import { HiUserAdd } from 'react-icons/hi';
-import DevelopedBy from '../../components/partial/DevelopedBy';
+
 import clsx from 'clsx';
 // import FileUploader from '@/ui/file-uploader/FileUploader';
 import useFileUploader from '@/hooks/useFileUploader';
@@ -47,13 +47,30 @@ function Home() {
 
   const canEdit = ['UNVERIFIED', 'FOR RESUBMISSION'].includes(data.status || '');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Debug logging
+  console.log('🏠 Home component render:', {
+    canEdit,
+    status: data.status,
+    isLoading: uploader.isLoading,
+    banner_url: data.banner_url
+  });
 
-    // Validate file size (20MB)
-    if (file.size > 20971520) {
-      alert('File size must be less than 20MB');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('🎯 Banner upload clicked, canEdit:', canEdit);
+    console.log('🎯 Startup status:', data.status);
+    console.log('🎯 File input event:', e.target.files);
+    
+    const file = e.target.files?.[0];
+    if (!file) {
+      console.log('🚨 No file selected');
+      return;
+    }
+
+    console.log('📁 Selected file:', file.name, file.size, file.type);
+
+    // Validate file size (50MB)
+    if (file.size > 52428800) {
+      alert('File size must be less than 50MB');
       return;
     }
 
@@ -63,15 +80,32 @@ function Home() {
       return;
     }
 
+    console.log('🚀 Starting file upload...');
     // Upload file
     uploader.mutate(
       { payload: { file } },
       {
         onSuccess: (url: string) => {
-          mutator.mutate({ payload: { ...data, banner_url: url } });
+          console.log('✅ Upload successful, URL:', url);
+          console.log('🔄 Updating startup with new banner URL...');
+          console.log('📊 Current data:', data);
+          console.log('🆕 New data will be:', { ...data, banner_url: url });
+          
+          mutator.mutate(
+            { payload: { ...data, banner_url: url } },
+            {
+              onSuccess: (response) => {
+                console.log('✅ Startup update successful:', response);
+              },
+              onError: (updateError) => {
+                console.error('❌ Startup update failed:', updateError);
+                alert('Failed to update startup. Please try again.');
+              }
+            }
+          );
         },
         onError: (error) => {
-          console.error('Upload failed:', error);
+          console.error('❌ Upload failed:', error);
           alert('Upload failed. Please try again.');
         },
       }
@@ -79,8 +113,8 @@ function Home() {
   };
 
   return (
-    <div className=' sm:w-full mx-auto'>
-      <div className='relative z-10'>
+    <div className='w-full bg-white min-h-screen'>
+      <div className='relative z-10 -mt-4'>
         <input
           type='file'
           accept='image/png,image/jpeg,image/jpg'
@@ -89,12 +123,23 @@ function Home() {
           className='hidden'
           id='banner-upload'
         />
-        <label htmlFor='banner-upload' className={canEdit ? 'cursor-pointer' : 'cursor-default'}>
+        <div 
+          className={canEdit ? 'cursor-pointer' : 'cursor-default'}
+          onClick={() => {
+            console.log('🏷️ Div clicked, canEdit:', canEdit);
+            if (canEdit && !uploader.isLoading) {
+              console.log('🏷️ Triggering file input click');
+              document.getElementById('banner-upload')?.click();
+            } else {
+              console.log('🏷️ Upload disabled - canEdit:', canEdit, 'loading:', uploader.isLoading);
+            }
+          }}
+        >
           <CustomBannerUpload banner_url={data.banner_url} isUploading={uploader.isLoading} progress={progress} />
-        </label>
+        </div>
       </div>
-      <div className='flex flex-col gap-8 lg:px-20'>
-        <HomeSectionContainer className='md:-mt-28'>
+      <div className='flex flex-col gap-6 lg:px-20 pb-10'>
+        <HomeSectionContainer className='md:-mt-28 shadow-lg hover:shadow-xl transition-shadow duration-300'>
           <StartupInfo
             data={data}
             isUnverified={isUnverified}
@@ -103,7 +148,7 @@ function Home() {
           />
         </HomeSectionContainer>
 
-        <HomeSectionContainer>
+        <HomeSectionContainer className='shadow-md hover:shadow-lg transition-shadow duration-300'>
           <Portfolio canEdit={canEdit} body={data?.body || []} />
         </HomeSectionContainer>
       </div>
@@ -119,15 +164,14 @@ function Home() {
           type='button'
           onClick={() => toggleGetVerified(!showGetVerified)}
           className={clsx(
-            'fixed right-10 bottom-20 lg:bottom-10 bg-black z-30 flex items-center justify-center flex-col w-16 h-16 p-3 transition-all ease-in-out delay-500 opacity-1 rounded-full shadow-md duration-500',
+            'fixed right-10 bottom-20 lg:bottom-10 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 z-30 flex items-center justify-center flex-col w-16 h-16 p-3 transition-all ease-in-out opacity-1 rounded-full shadow-lg hover:shadow-2xl duration-300 hover:scale-110',
             showGetVerified && 'opacity-0 pointer-events-none'
           )}
         >
-          <HiUserAdd className='w-6 h-6 text-primary' />
+          <HiUserAdd className='w-6 h-6 text-white' />
           <small className='text-white text-xs font-semibold'>Verify</small>
         </button>
       )}
-      <DevelopedBy />
     </div>
   );
 }

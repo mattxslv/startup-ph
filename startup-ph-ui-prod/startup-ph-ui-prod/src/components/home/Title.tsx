@@ -5,7 +5,7 @@ type Props = {
 };
 
 function Title({ label }: Props) {
-  return <div className='font-semibold text-dark leading-[30px] text-xl'>{label}</div>;
+  return <div className='font-semibold text-dark leading-[30px] text-2xl'>{label}</div>;
 }
 
 export default Title;

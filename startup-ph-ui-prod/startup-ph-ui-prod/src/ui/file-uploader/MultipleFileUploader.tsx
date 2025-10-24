@@ -28,7 +28,7 @@ interface FileUploaderProps {
 
 const FileUploader: React.FC<FileUploaderProps> = ({
   accept = ['image/*', 'application/pdf'],
-  maxSize = 5 * 1024 * 1024,
+  maxSize = 25 * 1024 * 1024,
   maxFiles = 10,
   endpoint = '/ext/staging/upload',
   onUploadComplete,
@@ -110,7 +110,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     }
 
     if (file.size > maxSize) {
-      const errorMsg = `File size exceeds ${maxSize / (1024 * 1024)}MB: ${file.name}`;
+      const errorMsg = `File "${file.name}" is too large. Maximum allowed size is ${maxSize / (1024 * 1024)}MB. Please compress or choose a smaller file.`;
       Toast.error(errorMsg);
       return errorMsg;
     }

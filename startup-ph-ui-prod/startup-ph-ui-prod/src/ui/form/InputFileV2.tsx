@@ -1,7 +1,7 @@
 import InputShell from '@/ui/form/InputShell';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useFormContext } from '@/ui/form/hooks';
-import FileUploader from '../file-uploader/FileUploader';
+import UploadcareFileUploader from '@/ui/file-uploader/UploadcareFileUploader';
 import Toast from '../toast/Toast';
 
 type Props = {
@@ -28,7 +28,7 @@ function InputFileV2({
   note,
   disabled,
   className,
-  maxFileSize = 5242880, // Default 5mb
+  maxFileSize = 26214400, // Default 25mb
   onUploadSuccess,
   required,
   customRender,
@@ -64,7 +64,7 @@ function InputFileV2({
 
   return (
     <InputShell label={inputLabel} note={error ?? note} error={error} optional={!required}>
-      <FileUploader
+      <UploadcareFileUploader
         options={options}
         className={className}
         disabled={disabled}

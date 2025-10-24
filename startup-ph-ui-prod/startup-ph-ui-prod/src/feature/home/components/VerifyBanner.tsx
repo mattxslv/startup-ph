@@ -1,7 +1,7 @@
 import Button from '@/ui/button/Button';
 import clsx from 'clsx';
 import React from 'react';
-import { HiChevronRight } from 'react-icons/hi';
+import { HiChevronRight, HiX } from 'react-icons/hi';
 import { showVerifyModal } from './verify';
 
 interface Props {
@@ -23,11 +23,12 @@ const VerifyBanner = ({ showGetVerified, isVerifiable, toggleGetVerified }: Prop
       <div className='bg-black text-white py-4 px-6 rounded-lg text-sm w-full max-w-lg sm:max-w-5xl mx-auto'>
         <div className='float-right'>
           <button
-            className='focus:outline-none focus:underline'
+            className='focus:outline-none hover:bg-gray-800 rounded-full p-1 transition-colors'
             onClick={() => toggleGetVerified(false)}
             type='button'
+            aria-label='Close'
           >
-            Minimize
+            <HiX className='w-5 h-5' />
           </button>
         </div>
         <div className='text-lg font-semibold'>Get Verified</div>

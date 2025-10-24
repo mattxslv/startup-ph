@@ -28,7 +28,7 @@ interface UploadResult {
   filename: string;
 }
 
-const defaultEndpoint = `/ext/${process.env.NEXT_PUBLIC_UPLOADER_PROJECT}/upload`; // default endpoint if none provided
+const defaultEndpoint = `/api/upload`; // Use local Laravel API endpoint
 
 export const useFileUpload = (options: UploadOptions = {}) => {
   const { endpoint = defaultEndpoint, onProgress } = options;

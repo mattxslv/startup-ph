@@ -18,12 +18,16 @@ const payloadProject = (raw: Partial<TStartup>) => {
 
 export const useSaveStartup = () => {
   return useMutation({
-    mutationFn: async ({ payload }: { payload: Partial<TStartup> }) =>
-      await ws.post({
+    mutationFn: async ({ payload }: { payload: Partial<TStartup> }) => {
+      const processedPayload = payloadProject(payload);
+      console.log('🚀 Original payload:', payload);
+      console.log('🚀 Processed payload:', processedPayload);
+      return await ws.post({
         url: '/api/v2/user/startup',
-        payload: payloadProject(payload),
+        payload: processedPayload,
         // payload,
-      }),
+      });
+    },
     onSuccess: () => {
       setTimeout(() => {
         queryClient.invalidateQueries(['MY_STARTUP']);
@@ -34,11 +38,15 @@ export const useSaveStartup = () => {
 
 export const useSubmitStartup = () => {
   return useMutation({
-    mutationFn: async ({ payload }: { payload: Partial<TStartup> }) =>
-      await ws.post({
+    mutationFn: async ({ payload }: { payload: Partial<TStartup> }) => {
+      const processedPayload = { ...payloadProject(payload), is_oath_accepted: 1 };
+      console.log('🚀 Original payload:', payload);
+      console.log('🚀 Processed payload:', processedPayload);
+      return await ws.post({
         url: '/api/v2/user/startup/get_verified',
-        payload: { ...payloadProject(payload), is_oath_accepted: 1 },
-      }),
+        payload: processedPayload,
+      });
+    },
     onSuccess: () => {
       queryClient.setQueryData(['MY_STARTUP'], (prev: any) => {
         return { ...prev, status: 'VERIFIED' };

@@ -48,11 +48,11 @@ const Contact = ({ onClose }: IProps) => {
           </div>
 
           <div className='flex items-center justify-end gap-4 mt-5'>
-            <Button variant='link' onClick={onClose}>
+            <Button variant='link' onClick={onClose} disabled={mutator.isLoading}>
               Cancel
             </Button>
-            <Button variant='primary' type='submit' disabled={!dirty}>
-              Save
+            <Button variant='primary' type='submit' disabled={!dirty || mutator.isLoading}>
+              {mutator.isLoading ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </>

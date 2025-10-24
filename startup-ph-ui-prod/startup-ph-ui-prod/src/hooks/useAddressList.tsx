@@ -1,6 +1,5 @@
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { transform } from '../transformers';
-import { useEffect } from 'react';
 import { ws } from '@/lib';
 
 const fetchList =
@@ -19,14 +18,13 @@ const fetchList =
     );
 
 const useAddressList = (type: string, params?: any) => {
+  // Include params in queryKey so React Query properly caches per parameter combination
   const query = useQuery({
-    queryKey: ['ADDRESS', type],
+    queryKey: ['ADDRESS', type, params],
     queryFn: fetchList(type, params),
+    enabled: true, // Always enabled, but will only fetch when params change
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes - addresses don't change often
   });
-
-  useEffect(() => {
-    query.refetch();
-  }, [JSON.stringify(params)]);
 
   return query;
 };

@@ -42,7 +42,7 @@ function Modal({ children, size, onClose, title, titleClose, closeOutsideClick }
   );
   return (
     <Transition.Root appear show={open} as={Fragment}>
-      <Dialog as='div' className='relative z-40' onClose={closeOutsideClick ? setOpen : doNothing}>
+      <Dialog as='div' className='relative z-[60]' onClose={closeOutsideClick ? setOpen : doNothing}>
         <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'

@@ -137,6 +137,8 @@ async function post<T = unknown>(
 
   if (raw?.status >= 300) {
     const errMessage = raw?.data?.message || 'Unable to process';
+    console.error('🚨 API Error Response:', raw?.data);
+    console.error('🚨 API Error Status:', raw?.status);
     Toast.error(errMessage);
     throw Object.assign(new Error(errMessage), { status: raw?.status });
   }

@@ -7,10 +7,10 @@ import { TStartup } from '@/feature/startup/types';
 import Button from '@/ui/button/Button';
 import Form from '@/ui/form/Form';
 import Input from '@/ui/form/Input';
-import InputFileV2 from '@/ui/form/InputFileV2';
 import InputTextArea from '@/ui/form/InputTextArea';
+import LogoUploader from '@/ui/file-uploader/LogoUploader';
 import React from 'react';
-import { HiInformationCircle, HiUpload } from 'react-icons/hi';
+import { HiInformationCircle } from 'react-icons/hi';
 import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
@@ -38,25 +38,25 @@ const Identity = ({ onClose }: IProps) => {
       validationSchema={validationSchema}
       className='flex flex-col gap-5'
     >
-      {({ dirty }) => (
+      {({ dirty, values, setFieldValue }) => (
         <>
           <div className='flex justify-center pb-4'>
-            <InputFileV2
-              name='logo_url'
-              placeholder={
-                <div className='flex items-center justify-center w-full text-gray-400 text-xs'>
-                  <HiUpload className='w-5 h-5 mr-1' />
-                  Select Logo
-                </div>
-              }
-              className='w-32 mx-auto'
-              imageOnly
-              required
+            <LogoUploader
+              value={values?.logo_url}
+              onChange={(url) => setFieldValue('logo_url', url)}
+              maxFileSize={26214400}
             />
           </div>
 
           <div className='flex flex-col gap-5'>
             <Input name='name' label='Startup Name' required />
+            
+            <Input 
+              name='business_name' 
+              label='Corporation/Business Name (Legal Entity)' 
+              placeholder='Enter official DTI/SEC registered name'
+              note='Enter the official corporation or business name as registered with DTI/SEC if different from your startup name'
+            />
 
             <InputDatasetTags code='sector' name='sectors' label='Startup Sector' required />
 
@@ -71,6 +71,14 @@ const Identity = ({ onClose }: IProps) => {
                   </button>
                 </div>
               }
+              fallbackOptions={[
+                { label: 'Ideation Stage', value: 'Ideation Stage' },
+                { label: 'Validation Stage', value: 'Validation Stage' },
+                { label: 'Early Stage', value: 'Early Stage' },
+                { label: 'Growth Stage', value: 'Growth Stage' },
+                { label: 'Expansion Stage', value: 'Expansion Stage' },
+                { label: 'Maturity Stage', value: 'Maturity Stage' }
+              ]}
             />
 
             <Input
@@ -85,11 +93,11 @@ const Identity = ({ onClose }: IProps) => {
           </div>
 
           <div className='flex items-center justify-end gap-4 mt-5'>
-            <Button variant='link' onClick={onClose}>
+            <Button variant='link' onClick={onClose} disabled={mutator.isLoading}>
               Cancel
             </Button>
-            <Button variant='primary' type='submit' disabled={!dirty}>
-              Save
+            <Button variant='primary' type='submit' disabled={!dirty || mutator.isLoading}>
+              {mutator.isLoading ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </>

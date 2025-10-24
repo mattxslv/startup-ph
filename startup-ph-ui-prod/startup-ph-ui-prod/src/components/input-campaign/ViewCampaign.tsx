@@ -14,11 +14,11 @@ function ViewCampaign({ data, message }: Props) {
   return (
     <div className='w-full p-5'>
       {data.length < 1 ? (
-        <div className='flex flex-col  items-center text-center text-sm '>
+        <div className='flex flex-col  items-center text-center text-base '>
           <div>
-            <Image width={80} height={80} src='/images/startup/empty-box.png' alt=''></Image>
+            <Image width={100} height={100} src='/images/startup/empty-box.png' alt=''></Image>
           </div>
-          <h1 className='max-w-xl text-gray-500'>{message ? message : defaultMsg}</h1>
+          <h1 className='max-w-xl text-gray-500 text-lg'>{message ? message : defaultMsg}</h1>
         </div>
       ) : (
         React.Children.toArray(data.map((row, i) => <SectionItem data={row} />))

@@ -36,6 +36,7 @@ const useDatasetOptions = (code: string, params?: any) => {
   return useQuery({
     queryKey: ['DATASET', code, JSON.stringify(params)],
     queryFn: fetchList(code, params),
+    staleTime: 10 * 60 * 1000, // Cache for 10 minutes - dataset options rarely change
   });
 };
 
