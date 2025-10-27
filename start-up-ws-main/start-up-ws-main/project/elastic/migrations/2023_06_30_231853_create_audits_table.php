@@ -19,7 +19,7 @@ final class CreateAuditsTable implements MigrationInterface
             $mapping->keyword('user_id');
             $mapping->text('user_name');
             $mapping->keyword('event');
-            $mapping->keyword('auditable_id');
+            $mapping->long('auditable_id');
             $mapping->keyword('auditable_type');
             $mapping->text('old_values');
             $mapping->text('new_values');

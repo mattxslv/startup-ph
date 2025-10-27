@@ -44,6 +44,16 @@ class Audit extends ModelsAudit
         $data['old_values'] = json_encode($this->old_values);
         $data['new_values'] = json_encode($this->new_values);
         $data['created_at'] = (new Carbon())->format('Y-m-d H:i:s');
+        
+        // Convert UUID auditable_id to integer for Elasticsearch
+        // If auditable_id is a UUID string, convert it to a numeric hash
+        if (!empty($data['auditable_id']) && !is_numeric($data['auditable_id'])) {
+            // Convert UUID string to a consistent integer
+            $data['auditable_id'] = abs(crc32($data['auditable_id']));
+        } else {
+            // If it's already numeric or empty, cast to int
+            $data['auditable_id'] = $data['auditable_id'] ? (int)$data['auditable_id'] : null;
+        }
 
         return $data;
     }

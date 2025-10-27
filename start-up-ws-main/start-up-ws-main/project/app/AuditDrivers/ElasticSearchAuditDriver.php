@@ -33,8 +33,18 @@ class ElasticSearchAuditDriver implements AuditDriver
             ]);
         } catch (\Throwable $e) {
             $audit->error = $e->getMessage();
+        }
 
+        // Attempt to save audit to database
+        // Wrap in try-catch to prevent Elasticsearch sync errors from breaking the request
+        try {
             $audit->save();
+        } catch (\Throwable $e) {
+            // Log the error but don't throw it to prevent breaking the user's request
+            \Log::error('Failed to save audit log: ' . $e->getMessage(), [
+                'audit' => $audit->toArray(),
+                'exception' => $e,
+            ]);
         }
 
         return $audit;

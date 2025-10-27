@@ -22,7 +22,12 @@ trait StartupSubmissionTrait
         // NOTE: This is to validate if startup have complete details
         request()->merge($this->toArray())->validate((new DraftStartupRequest())->rules());
 
-        $this->checkStatus(StartupEnum::STATUS['UNVERIFIED'])
+        // Allow submission from UNVERIFIED or VERIFIED status
+        // This allows users to update and resubmit their verification
+        $this->checkStatus([
+                StartupEnum::STATUS['UNVERIFIED'],
+                StartupEnum::STATUS['VERIFIED']
+            ])
             ->update([
                 'status' => StartupEnum::STATUS['FOR VERIFICATION'],
                 'submitted_at' => date('Y-m-d H:i:s'),

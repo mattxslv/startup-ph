@@ -8,6 +8,7 @@ use App\Http\Controllers\Common\MunicipalityController;
 use App\Http\Controllers\Common\ProgramController;
 use App\Http\Controllers\Common\ProvinceController;
 use App\Http\Controllers\Common\RegionController;
+use App\Http\Controllers\Common\SectorController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('common')->group(function () {
@@ -19,6 +20,7 @@ Route::prefix('common')->group(function () {
 
     Route::get('datasets', DatasetController::class);
     Route::get('assessment_tags', AssessmentTagController::class);
+    Route::get('sectors', SectorController::class);
 
     Route::apiResource('programs', ProgramController::class)->only('index', 'show');
 });
