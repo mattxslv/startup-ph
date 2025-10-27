@@ -1,81 +1,91 @@
-# Gmail Setup for Production
+# Email Configuration Guide
 
-## Current Configuration
+## Current Status
 
-**Email Address:** startup.support@dict.gov.ph  
-**Purpose:** 
-- Send OTP codes for user verification
-- Support email for user inquiries
-- System notifications
+✅ **Development Environment:** Fully configured and working!
+- **Email Service:** Mailpit (local email testing)
+- **From Address:** startup.support@dict.gov.ph
+- **Access:** http://localhost:8025
+- **Status:** All OTP codes and emails are captured locally
 
----
-
-## Development Setup (Current)
-
-✅ Already configured! Emails are captured by **Mailpit** for testing.
-
-- All emails appear in: http://localhost:8025
-- No actual emails are sent
-- Perfect for development and testing
+⏳ **Production Environment:** To be configured before deployment
+- Contact DICT IT administrator for email server details
+- See production options below
 
 ---
 
-## Production Setup
+## Development Setup (ACTIVE)
 
-When deploying to production, you need to configure Gmail to send real emails.
+All emails are captured by **Mailpit** - no configuration needed!
 
-### Step 1: Enable 2-Factor Authentication
+**How it works:**
+1. Application sends emails normally
+2. Mailpit intercepts them (no emails actually sent)
+3. View all emails at: http://localhost:8025
+4. Perfect for testing OTP codes, password resets, notifications
 
-1. Go to your Google Account: https://myaccount.google.com
-2. Click **Security** in the left menu
-3. Under "Signing in to Google", click **2-Step Verification**
-4. Follow the setup process to enable 2FA
+**Test it:**
+- Sign up for a new account
+- Check http://localhost:8025 for the OTP email
+- Copy the OTP code from the email
+- Complete registration
 
-### Step 2: Generate App Password
+---
 
-1. Go to: https://myaccount.google.com/apppasswords
-2. You may need to sign in again
-3. In the "Select app" dropdown, choose **Mail**
-4. In the "Select device" dropdown, choose **Other (Custom name)**
-5. Enter: **StartupPH Laravel**
-6. Click **Generate**
-7. **COPY THE 16-CHARACTER PASSWORD** (looks like: `abcd efgh ijkl mnop`)
+## Production Setup (FUTURE)
 
-### Step 3: Update Production .env
+When deploying to production, you'll need to configure real email sending.
 
-In your production server's `.env` file:
+### Option 1: DICT Mail Server (Recommended)
 
+Contact your DICT IT administrator and request:
+- Mail server hostname (e.g., mail.dict.gov.ph)
+- SMTP port (usually 587 or 465)
+- Authentication username and password
+- From address approval for startup.support@dict.gov.ph
+
+Then update production `.env`:
 ```env
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.gmail.com
+MAIL_HOST=mail.dict.gov.ph
 MAIL_PORT=587
 MAIL_USERNAME=startup.support@dict.gov.ph
-MAIL_PASSWORD=your-16-char-app-password-here
+MAIL_PASSWORD=provided-by-it-admin
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS="startup.support@dict.gov.ph"
-MAIL_FROM_NAME="StartupPH"
 ```
 
-**Important Notes:**
-- Use the 16-character App Password, NOT your regular Gmail password
-- Remove all spaces from the App Password
-- Keep this password secure and never commit it to Git
+### Option 2: Gmail with App Password
 
-### Step 4: Test Email Sending
+**Requirements:**
+- 2-Factor Authentication enabled (✅ Already done)
+- Google Workspace admin must enable App Passwords
+- Contact DICT IT to generate App Password
 
-After deploying with the new configuration:
+**Note:** The startup.support@dict.gov.ph account appears to be a Google Workspace account managed by DICT. Individual users cannot generate App Passwords unless enabled by the workspace administrator.
 
-```bash
-# Clear config cache
-php artisan config:clear
+### Option 3: Third-Party Email Service
 
-# Test email sending
-php artisan tinker
->>> Mail::raw('Test email from StartupPH', function($message) {
-...     $message->to('your-test-email@example.com')
-...             ->subject('Test Email');
-... });
-```
+For high-volume production systems, consider:
+
+**SendGrid** (Recommended for Government)
+- Free tier: 100 emails/day
+- Paid: $19.95/month for 50,000 emails
+- Setup: https://sendgrid.com
+
+**AWS SES** (Amazon Simple Email Service)
+- Very cheap: $0.10 per 1,000 emails
+- Requires AWS account
+- Setup: https://aws.amazon.com/ses/
+
+---
+
+## Current Configuration Files
+
+All configuration files use Mailpit for development:
+
+✅ **config-backup/backend-laravel.env**
+✅ **start-up-ws-main/start-up-ws-main/project/.env**
+
+From address is set to: **startup.support@dict.gov.ph**
 
 ---
 
@@ -83,64 +93,46 @@ php artisan tinker
 
 The system sends emails for:
 
-1. **OTP Verification** - When users sign up or verify their account
-2. **Password Reset** - When users request password reset
-3. **Application Status** - When startup applications are approved/rejected
-4. **System Notifications** - Important updates and announcements
+1. **OTP Verification** - Account signup and verification
+2. **Password Reset** - Password recovery
+3. **Application Status** - Startup application updates
+4. **System Notifications** - Important announcements
 
-All emails will come from: **startup.support@dict.gov.ph**
+All emails include the StartupPH branding and DICT footer.
+
+---
+
+## Next Steps for Production
+
+Before deploying to production:
+
+1. ☐ Contact DICT IT administrator
+2. ☐ Request email server details or App Password
+3. ☐ Update production `.env` file with real credentials
+4. ☐ Test email sending on staging server
+5. ☐ Verify OTP delivery works
+6. ☐ Monitor email delivery rates
 
 ---
 
 ## Troubleshooting
 
-### "Less secure app access" Error
-- Gmail no longer supports this. You MUST use App Passwords with 2FA enabled.
+### Development
 
-### "Invalid credentials" Error
-- Double-check the App Password is correct (no spaces)
-- Ensure 2FA is enabled on the Google account
-- Make sure you're using `smtp.gmail.com` and port `587`
+**Problem:** Can't access http://localhost:8025
+- **Solution:** Make sure Docker is running: `docker ps`
+- Check Mailpit container is up: `docker logs start-up-ws-main-mailpit`
 
-### Emails Not Sending
-1. Check Laravel logs: `storage/logs/laravel.log`
-2. Verify Gmail account isn't locked
-3. Test SMTP connection:
-   ```bash
-   telnet smtp.gmail.com 587
-   ```
+**Problem:** Emails not appearing in Mailpit
+- **Solution:** Clear Laravel config: `docker exec start-up-ws-main-app php artisan config:clear`
+- Check `.env` has: `MAIL_HOST=mailpit`
 
-### Gmail Daily Sending Limits
-- Free Gmail: ~500 emails/day
-- Google Workspace: ~2,000 emails/day
-- If you need more, consider using a dedicated email service (SendGrid, AWS SES, etc.)
+### Production (Future)
+
+See production email service documentation when configured.
 
 ---
 
-## Security Best Practices
-
-✅ **DO:**
-- Use App Passwords (never regular password)
-- Store password in `.env` file (not in code)
-- Keep `.env` file out of Git (already in `.gitignore`)
-- Rotate App Password every 3-6 months
-- Monitor sent email logs
-
-❌ **DON'T:**
-- Commit passwords to Git
-- Share App Password with anyone
-- Use the same password for multiple systems
-- Disable 2FA to avoid App Passwords
-
----
-
-## Current Status
-
-- ✅ Email configured: `startup.support@dict.gov.ph`
-- ✅ Development: Using Mailpit (http://localhost:8025)
-- ⏳ Production: Needs App Password setup (see steps above)
-
----
-
-**Last Updated:** October 27, 2025  
-**Configured By:** DICT Development Team
+**Current Status:** Development ready ✅  
+**Production Status:** Pending IT configuration ⏳  
+**Last Updated:** October 27, 2025
