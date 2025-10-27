@@ -324,7 +324,7 @@ This is a government project. For contributions:
 
 For issues and support:
 
-- **Email:** startupph@dict.gov.ph
+- **Email:** startup.support@dict.gov.ph
 - **GitHub Issues:** [Create an issue](../../issues)
 - **DICT Support:** https://dict.gov.ph/contact
 
