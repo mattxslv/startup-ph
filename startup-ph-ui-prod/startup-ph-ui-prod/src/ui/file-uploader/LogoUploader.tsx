@@ -119,13 +119,40 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({
             </div>
           )}
 
-          {/* Uploading Spinner */}
+          {/* Uploading Progress */}
           {isUploading && (
-            <div className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex flex-col items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-              <p className="text-white text-xs mt-2">
-                {progress !== null ? `${Math.round(progress)}%` : 'Uploading...'}
-              </p>
+            <div className="absolute inset-0 rounded-full bg-black bg-opacity-70 flex flex-col items-center justify-center">
+              {/* Circular Progress Ring */}
+              <div className="relative w-20 h-20">
+                <svg className="transform -rotate-90 w-20 h-20">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    fill="none"
+                    className="text-white/20"
+                  />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="currentColor"
+                    strokeWidth="6"
+                    fill="none"
+                    strokeDasharray={226.19}
+                    strokeDashoffset={226.19 - (226.19 * (progress || 0)) / 100}
+                    className="text-white transition-all duration-300"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-sm font-bold text-white">
+                    {progress !== null ? Math.round(progress) : 0}%
+                  </span>
+                </div>
+              </div>
             </div>
           )}
         </div>

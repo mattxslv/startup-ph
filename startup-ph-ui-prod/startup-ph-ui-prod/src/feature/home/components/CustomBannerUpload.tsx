@@ -21,6 +21,52 @@ const CustomBannerUpload = (props: any) => {
   // Updated banner placeholder design
   return (
     <div className='relative pt-[34%] md:pt-[28%] bg-gray-400'>
+      {/* Upload Progress Overlay */}
+      {uploading && (
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+          <div className="flex flex-col items-center gap-4">
+            {/* Circular Progress Ring */}
+            <div className="relative w-24 h-24">
+              <svg className="transform -rotate-90 w-24 h-24">
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="44"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="none"
+                  className="text-white/20"
+                />
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="44"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  fill="none"
+                  strokeDasharray={276.46}
+                  strokeDashoffset={276.46 - (276.46 * (uploadProgress || 0)) / 100}
+                  className="text-white transition-all duration-300"
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xl font-bold text-white">
+                  {formatNumber(uploadProgress || 0, 0)}%
+                </span>
+              </div>
+            </div>
+            <p className="text-white text-lg font-medium">Uploading banner...</p>
+            <div className="w-64 bg-white/20 rounded-full h-2 overflow-hidden">
+              <div 
+                className="bg-white h-2 transition-all duration-300 ease-out"
+                style={{ width: `${uploadProgress || 0}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className='absolute top-0 right-0 bg-black/20 rounded-bl-lg z-20'>
         <Button
           onClick={onToggleMenu}
@@ -30,7 +76,7 @@ const CustomBannerUpload = (props: any) => {
           size='xs'
         >
           {uploading 
-            ? `- ${formatNumber(uploadProgress || 0, 1)}% -` 
+            ? '' 
             : banner_url 
               ? '' 
               : 'Upload Banner'}

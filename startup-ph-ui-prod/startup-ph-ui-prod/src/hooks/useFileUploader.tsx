@@ -1,6 +1,6 @@
-import uploadClient from '@/lib/uploadcare/uploadClient'
 import { useMutation, UseMutationResult } from '@tanstack/react-query'
 import { useState } from 'react'
+import axios from 'axios'
 
 interface IPayload {
   payload: {
@@ -12,38 +12,42 @@ const useFileUploader = (): [UseMutationResult<any, unknown, IPayload, unknown>,
   const [progress, setProgress] = useState<null | number>(null)
   const mutator = useMutation({
     mutationFn: async ({ payload }: IPayload) => {
-      console.log('📤 Starting Uploadcare upload for file:', payload.file.name);
+      console.log('📤 Starting Google Cloud Storage upload for file:', payload.file.name);
       setProgress(0)
-      return new Promise((resolve, reject) => {
-        uploadClient
-          .uploadFile(payload.file, {
-            publicKey: process.env.NEXT_PUBLIC_UPLOADCARE_PUB_KEY,
-            store: 'auto',
-            onProgress: (v) => {
-              if (v.isComputable) {
-                const progressValue = v.value as number * 100;
-                setProgress(progressValue);
-                console.log('📊 Upload progress:', Math.round(progressValue) + '%');
-              }
+      
+      try {
+        // Step 1: Get signed URL from our API
+        const signedUrlResponse = await axios.post('/api/upload/generate-signed-url', {
+          fileName: payload.file.name,
+          contentType: payload.file.type,
+        });
+
+        const { signedUrl, publicUrl } = signedUrlResponse.data;
+        console.log('🔗 Signed URL obtained');
+
+        // Step 2: Upload directly to Google Cloud Storage
+        await axios.put(signedUrl, payload.file, {
+          headers: {
+            'Content-Type': payload.file.type,
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setProgress(percentCompleted);
+              console.log('📊 Upload progress:', percentCompleted + '%');
             }
-          })
-          .then(file => {
-            console.log('✅ Uploadcare response:', file);
-            setProgress(null);
-            if (file.cdnUrl) {
-              console.log('🔗 CDN URL obtained:', file.cdnUrl);
-              resolve(file.cdnUrl);
-            } else {
-              console.error('❌ No CDN URL in response');
-              reject(new Error('No CDN URL received'));
-            }
-          })
-          .catch(error => {
-            console.error('❌ Uploadcare upload error:', error);
-            setProgress(null);
-            reject(error);
-          });
-      });
+          },
+        });
+
+        console.log('✅ File uploaded successfully to GCS');
+        console.log('🔗 Public URL:', publicUrl);
+        setProgress(null);
+        return publicUrl;
+      } catch (error) {
+        console.error('❌ GCS upload error:', error);
+        setProgress(null);
+        throw error;
+      }
     },
     onSuccess: () => {
       setProgress(null)

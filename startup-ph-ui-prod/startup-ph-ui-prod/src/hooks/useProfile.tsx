@@ -120,7 +120,8 @@ const useProfile = () => {
     queryKey: ['PROFILE'],
     queryFn: fetch(),
     enabled: !!session?.data?.token,
-    staleTime: 1000,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes - profile doesn't change often
+    cacheTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
     onSuccess: (res) => {
       if (!res._is_profile_completed) router.push('/profile/update');
     },

@@ -23,7 +23,8 @@ const useAddressList = (type: string, params?: any) => {
     queryKey: ['ADDRESS', type, params],
     queryFn: fetchList(type, params),
     enabled: true, // Always enabled, but will only fetch when params change
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes - addresses don't change often
+    staleTime: 30 * 60 * 1000, // Cache for 30 minutes - addresses don't change often
+    cacheTime: 60 * 60 * 1000, // Keep in cache for 1 hour
   });
 
   return query;

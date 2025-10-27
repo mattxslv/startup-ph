@@ -25,7 +25,7 @@ StartupPH is the official Department of Information and Communications Technolog
 - **State Management:** React Query (@tanstack/react-query)
 - **Forms:** Formik + Yup validation
 - **Authentication:** eGov SSO Widget
-- **File Upload:** Uploadcare CDN
+- **File Upload:** Google Cloud Storage
 
 ### Backend
 - **Framework:** Laravel 10
@@ -88,9 +88,9 @@ startupph/
 Copy and paste these commands in PowerShell:
 
 ```powershell
-# 1. Navigate and pull
-cd Documents\DevSync\startupph
-git pull origin main
+# 1. Clone the repository
+git clone https://github.com/DICT-ORG/startupph.git
+cd startupph
 
 # 2. Restore environment files
 Copy-Item .\config-backup\backend-docker.env -Destination .\start-up-ws-main\start-up-ws-main\.env
@@ -98,7 +98,7 @@ Copy-Item .\config-backup\backend-laravel.env -Destination .\start-up-ws-main\st
 Copy-Item .\config-backup\frontend.env.local -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.env.local
 Copy-Item .\config-backup\.babelrc -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.babelrc
 
-# 3. Start Docker
+# 3. Start Docker containers
 cd start-up-ws-main\start-up-ws-main
 docker-compose up -d
 
@@ -112,15 +112,15 @@ docker exec start-up-ws-main-app php artisan migrate:fresh --seed
 cd ..\..\startup-ph-ui-prod\startup-ph-ui-prod
 npm install
 
-# 7. Start frontend
-npm run dev -- -p 3001
+# 7. Start frontend development server
+npm run dev
 ```
 
 ### Access the Application
 
 After setup completes, access:
 
-- **Frontend:** http://localhost:3001
+- **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8080
 - **Mailpit (Email Testing):** http://localhost:8025
 - **Elasticsearch:** http://localhost:9200
@@ -142,10 +142,14 @@ After setup completes, access:
 
 ### Frontend (.env.local)
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:8080
-NEXT_PUBLIC_APP_URL=http://localhost:3001
-NEXT_PUBLIC_EGOV_SSO_CLIENT_ID=STARTUP
-NEXT_PUBLIC_UPLOADCARE_PUB_KEY=demopublickey
+NEXT_PUBLIC_API_URL=http://localhost:8080/api/v2
+NEXT_PUBLIC_ELASTIC_URL=http://localhost:9200
+
+# Google Cloud Storage for file uploads
+NEXT_PUBLIC_GCS_BUCKET_NAME=startup-ph-uploads-2025
+GCS_PROJECT_ID=startup-ph-storage
+GCS_CLIENT_EMAIL=storage-uploader@startup-ph-storage.iam.gserviceaccount.com
+GCS_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
 ### Backend (.env)
@@ -164,7 +168,7 @@ See `config-backup/RESTORE_INSTRUCTIONS.md` for complete configuration details.
 ### Running Frontend Only
 ```powershell
 cd startup-ph-ui-prod\startup-ph-ui-prod
-npm run dev -- -p 3001
+npm run dev
 ```
 
 ### Running Backend Only
@@ -198,8 +202,8 @@ docker logs start-up-ws-main-app -f
 
 ### Port Already in Use
 ```powershell
-# Kill process on port 3001 (Frontend)
-$process = Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
+# Kill process on port 3000 (Frontend)
+$process = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
 if ($process) { Stop-Process -Id $process -Force }
 
 # Kill process on port 8080 (Backend)
@@ -223,10 +227,10 @@ docker ps | Select-String "database"
 docker exec start-up-ws-main-app php artisan cache:clear
 docker exec start-up-ws-main-app php artisan config:clear
 
-# Frontend cache
+# Frontend cache (from the frontend directory)
 cd startup-ph-ui-prod\startup-ph-ui-prod
 Remove-Item -Recurse -Force .next
-npm run dev -- -p 3001
+npm run dev
 ```
 
 ## 📊 Database Schema
@@ -267,7 +271,12 @@ Update these for production:
 NEXT_PUBLIC_API_URL=https://api.startupph.gov.ph
 NEXT_PUBLIC_APP_URL=https://startupph.gov.ph
 NEXT_PUBLIC_EGOV_SSO_ENV=PRODUCTION
-NEXT_PUBLIC_UPLOADCARE_PUB_KEY=<your-production-key>
+
+# Google Cloud Storage (use production bucket and credentials)
+NEXT_PUBLIC_GCS_BUCKET_NAME=startup-ph-production-uploads
+GCS_PROJECT_ID=startup-ph-production
+GCS_CLIENT_EMAIL=storage-uploader@startup-ph-production.iam.gserviceaccount.com
+GCS_PRIVATE_KEY="<production-private-key>"
 ```
 
 **Backend:**

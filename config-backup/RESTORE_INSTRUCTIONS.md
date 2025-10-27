@@ -7,13 +7,16 @@
 3. **frontend.env.local** → Copy to `startup-ph-ui-prod/startup-ph-ui-prod/.env.local`
 4. **.babelrc** → Copy to `startup-ph-ui-prod/startup-ph-ui-prod/.babelrc`
 
-## Setup Steps on Your Laptop:
+## Setup Steps:
 
 ### Quick Setup (Copy-Paste All Commands)
 ```powershell
-# 1. Navigate and pull
-cd Documents\DevSync\startupph
-git pull origin main
+# 1. Clone repository (if first time) or pull latest changes
+git clone https://github.com/DICT-ORG/startupph.git
+cd startupph
+# OR if already cloned:
+# cd startupph
+# git pull origin main
 
 # 2. Restore environment files
 Copy-Item .\config-backup\backend-docker.env -Destination .\start-up-ws-main\start-up-ws-main\.env
@@ -21,7 +24,7 @@ Copy-Item .\config-backup\backend-laravel.env -Destination .\start-up-ws-main\st
 Copy-Item .\config-backup\frontend.env.local -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.env.local
 Copy-Item .\config-backup\.babelrc -Destination .\startup-ph-ui-prod\startup-ph-ui-prod\.babelrc
 
-# 3. Start Docker
+# 3. Start Docker containers
 cd start-up-ws-main\start-up-ws-main
 docker-compose up -d
 
@@ -35,15 +38,20 @@ docker exec start-up-ws-main-app php artisan migrate:fresh --seed
 cd ..\..\startup-ph-ui-prod\startup-ph-ui-prod
 npm install
 
-# 7. Start frontend
-npm run dev -- -p 3001
+# 7. Start frontend development server
+npm run dev
 ```
 
 ### Detailed Step-by-Step Instructions
 
 ### 1. Clone/Pull the Repository
 ```powershell
-cd Documents\DevSync\startupph
+# First time setup
+git clone https://github.com/DICT-ORG/startupph.git
+cd startupph
+
+# OR update existing repository
+cd startupph
 git pull origin main
 ```
 
@@ -84,14 +92,14 @@ cd ..\..\startup-ph-ui-prod\startup-ph-ui-prod
 npm install
 ```
 
-### 7. Start Frontend
+### 7. Start Frontend Development Server
 ```powershell
-npm run dev -- -p 3001
+npm run dev
 ```
 
 ## Access the Application
 
-- **Frontend:** http://localhost:3001
+- **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8080
 - **Mailpit (Email):** http://localhost:8025
 
@@ -105,9 +113,8 @@ npm run dev -- -p 3001
 - Turnstile Secret: `1x0000000000000000000000000000000AA` (test key)
 
 ### Frontend (.env.local)
-- API URL: `http://localhost:8080`
-- End Point: `http://localhost:8080`
-- App URL: `http://localhost:3001`
+- API URL: `http://localhost:8080/api/v2`
+- Elastic URL: `http://localhost:9200`
 - eGov SSO Env: `STAGING/PRODUCTION`
 - eGov SSO Client ID: `STARTUP`
 
@@ -115,8 +122,8 @@ npm run dev -- -p 3001
 
 If you get port conflicts:
 ```powershell
-# Kill process on port 3001
-$process = Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
+# Kill process on port 3000 (Frontend)
+$process = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique
 if ($process) { Stop-Process -Id $process -Force }
 ```
 

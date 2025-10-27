@@ -17,7 +17,7 @@ interface Props {
   options?: Array<'file' | 'camera'>;
 }
 
-const UploadcareFileUploader = ({
+const GCSFileUploader = ({
   className,
   disabled,
   placeholder,
@@ -211,11 +211,47 @@ const UploadcareFileUploader = ({
           onDrop={handleDrop}
         >
           {isUploading ? (
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <p className="mt-2 text-sm text-gray-600">
-                Uploading... {progress !== null ? Math.round(progress) : 0}%
+            <div className="flex flex-col items-center gap-3">
+              {/* Circular Progress Ring */}
+              <div className="relative w-20 h-20">
+                <svg className="transform -rotate-90 w-20 h-20">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="none"
+                    className="text-gray-200"
+                  />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="36"
+                    stroke="currentColor"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeDasharray={226.19}
+                    strokeDashoffset={226.19 - (226.19 * (progress || 0)) / 100}
+                    className="text-blue-600 transition-all duration-300"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-blue-600">
+                    {progress !== null ? Math.round(progress) : 0}%
+                  </span>
+                </div>
+              </div>
+              <p className="text-sm font-medium text-gray-700">
+                Uploading file...
               </p>
+              <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="bg-blue-600 h-2 transition-all duration-300 ease-out"
+                  style={{ width: `${progress || 0}%` }}
+                />
+              </div>
             </div>
           ) : (
             placeholder || (
@@ -236,4 +272,4 @@ const UploadcareFileUploader = ({
   );
 };
 
-export default UploadcareFileUploader;
+export default GCSFileUploader;

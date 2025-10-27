@@ -1,7 +1,12 @@
 import InputShell from '@/ui/form/InputShell';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useFormContext } from '@/ui/form/hooks';
-import UploadcareFileUploader from '@/ui/file-uploader/UploadcareFileUploader';
+import { ErrorMessage, Field } from 'formik';
+import clsx from 'clsx';
+import FormError from './FormError';
+import GCSFileUploader from '@/ui/file-uploader/GCSFileUploader';
+
+type TFile = {
 import Toast from '../toast/Toast';
 
 type Props = {
@@ -64,7 +69,7 @@ function InputFileV2({
 
   return (
     <InputShell label={inputLabel} note={error ?? note} error={error} optional={!required}>
-      <UploadcareFileUploader
+      <GCSFileUploader
         options={options}
         className={className}
         disabled={disabled}
@@ -78,6 +83,6 @@ function InputFileV2({
       />
     </InputShell>
   );
-}
+};
 
 export default InputFileV2;
