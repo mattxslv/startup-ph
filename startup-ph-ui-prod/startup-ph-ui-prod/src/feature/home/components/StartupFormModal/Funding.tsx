@@ -186,7 +186,7 @@ const FundingForm = ({ onClose, mutator }: IProps & { mutator: any }) => {
                       'application/ms-doc',
                       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                     ]}
-                    maxSize={5 * 1024 * 1024} // 5MB
+                    maxSize={50 * 1024 * 1024} // 50MB
                     maxFiles={maxFiles}
                     onUploadComplete={(e) => handleFilesChange(e, index)}
                     value={funding.document_urls}

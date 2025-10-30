@@ -28,7 +28,7 @@ interface FileUploaderProps {
 
 const FileUploader: React.FC<FileUploaderProps> = ({
   accept = ['image/*', 'application/pdf'],
-  maxSize = 25 * 1024 * 1024,
+  maxSize = 50 * 1024 * 1024,
   maxFiles = 10,
   endpoint = '/ext/staging/upload',
   onUploadComplete,

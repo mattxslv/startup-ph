@@ -13,7 +13,7 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: IRegisterForm }) =>
       await ws.post({
-        url: '/api/v2/user/register',
+        url: '/api/v2/user/create-account',
         payload,
         transform: ({ data }) => ({
           token: data?.token,

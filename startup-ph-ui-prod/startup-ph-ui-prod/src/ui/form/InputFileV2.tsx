@@ -5,9 +5,12 @@ import { ErrorMessage, Field } from 'formik';
 import clsx from 'clsx';
 import FormError from './FormError';
 import GCSFileUploader from '@/ui/file-uploader/GCSFileUploader';
+import Toast from '../toast/Toast';
 
 type TFile = {
-import Toast from '../toast/Toast';
+  name: string;
+  url: string;
+};
 
 type Props = {
   inputLabel?: string;
@@ -33,7 +36,7 @@ function InputFileV2({
   note,
   disabled,
   className,
-  maxFileSize = 26214400, // Default 25mb
+  maxFileSize = 52428800, // Default 50mb
   onUploadSuccess,
   required,
   customRender,

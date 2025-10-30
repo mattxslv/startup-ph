@@ -78,6 +78,9 @@ const getInstance = (isUpload?: boolean): AxiosInstance => {
 
 // Helper function to get CSRF cookie
 async function getCsrfCookie(): Promise<void> {
+  // Disabled CSRF cookie fetching - using bearer token authentication instead
+  return;
+  /*
   try {
     // Use base URL without /api/v2 for sanctum endpoint
     console.log('Fetching CSRF cookie from:', `${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`);
@@ -87,6 +90,7 @@ async function getCsrfCookie(): Promise<void> {
   } catch (error) {
     console.error('Failed to fetch CSRF cookie:', error);
   }
+  */
 }
 
 async function get<T>(
@@ -128,7 +132,12 @@ async function post<T = unknown>(
   const raw = await axiosInstance.post(url, payload, config);
 
   if (raw?.status === 422) {
-    throw Object.assign(new Error('Unprocessable Entity'), {
+    console.error('🚨 Validation Error Response:', raw?.data);
+    console.error('🚨 Validation Errors Object:', raw?.data?.errors);
+    console.error('🚨 Validation Message:', raw?.data?.message);
+    console.table(raw?.data?.errors || {});
+    Toast.error(raw?.data?.message || 'Validation failed');
+    throw Object.assign(new Error(raw?.data?.message || 'Validation failed'), {
       errors: raw?.data?.errors,
       message: raw?.data?.message,
       status: raw?.status,

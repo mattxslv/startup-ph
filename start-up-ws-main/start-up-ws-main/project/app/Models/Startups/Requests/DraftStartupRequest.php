@@ -43,7 +43,7 @@ class DraftStartupRequest extends FormRequest
             'content' => ['required', 'array'],
             'development_phase' => ['required', 'max:100'],
             'founder_name' => ['required', 'max:100'],
-            'founding_year' => ['required', 'max:4', 'date_format:Y', 'gt:1900', 'lte:' . date('Y')],
+            'founding_year' => ['nullable', 'max:4', 'date_format:Y', 'gte:1900', 'lte:' . date('Y')],
             'business_classification' => ['required', 'max:100'],
             'business_name' => ['nullable', 'max:100'],
             'tin' => ['nullable', 'max:100', Rule::unique('startups', 'tin')->ignore(User::authenticated()->startup)],

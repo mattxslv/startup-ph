@@ -27,16 +27,8 @@ class StartupController extends Controller
     {
         $request->validate((new PaginateRequest(Startup::FILLABLES))->rules());
 
-        $query = Startup::searchQuery(Startup::filterES($request->only(Startup::FILTERS)))->size(10000);
-
-        if (request('q')) {
-            $query->sort('_score', 'desc');
-        }
-
-        $startups = $query
-            ->sort(Startup::getOrderBy(request('order_by')), (request('status_by') ?? 'desc'))
-            ->paginate(request('per_page') ?? 15)
-            ->onlyModels();
+        // Use database query instead of Elasticsearch since Scout is disabled
+        $startups = PaginationService::paginate(Startup::filter($request->only(Startup::FILTERS)));
 
         return StartupResources::collection($startups);
     }

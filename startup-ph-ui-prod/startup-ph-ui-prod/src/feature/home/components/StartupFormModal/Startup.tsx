@@ -116,7 +116,7 @@ const Startup = ({ onClose }: IProps) => {
                 Choose file to upload
               </div>
             }
-            note='*PDF, JPG, PNG, DOCX (max. 5mb)'
+            note='*PDF, JPG, PNG, DOCX (max. 50mb)'
             inputLabel='Upload Proof or Registration/Government Accreditation *'
             className='w-40'
             required

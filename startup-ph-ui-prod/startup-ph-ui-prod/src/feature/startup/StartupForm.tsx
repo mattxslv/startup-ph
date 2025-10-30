@@ -114,7 +114,7 @@ export const StartUpFields = () => {
                 Choose file to upload
               </div>
             }
-            note='*PDF, JPG, PNG, DOCX (max. 5mb)'
+            note='*PDF, JPG, PNG, DOCX (max. 50mb)'
             inputLabel='Upload Proof or Registration/Government Accreditation'
             className='w-40'
           />
@@ -127,7 +127,7 @@ export const StartUpFields = () => {
             fullClick={undefined}
             inputLabel='Upload Proof or Registration/Government Accreditation'
             name='proof_of_registration_url'
-            note='*PDF, JPG, PNG, DOCX (max. 5mb)'
+            note='*PDF, JPG, PNG, DOCX (max. 50mb)'
           /> */}
         </div>
         <div className='md:col-span-2 space-y-2 py-2'>
