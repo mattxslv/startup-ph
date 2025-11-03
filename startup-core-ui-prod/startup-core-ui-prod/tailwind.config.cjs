@@ -5,6 +5,16 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    container: {
+      center: true,
+      screens: {
+        sm: '100%',
+        md: '100%',
+        lg: '100%',
+        xl: '100%',
+        '2xl': '100%',
+      },
+    },
     extend: {
       boxShadow: {
         active: '0 0 12px 0 rgba(0, 0, 0, 0.1) inset',

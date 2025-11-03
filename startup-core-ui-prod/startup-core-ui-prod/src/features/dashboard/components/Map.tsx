@@ -1,4 +1,4 @@
-import GoogleMap from 'ui/components/google-map/GoogleMap';
+import OpenLayerMap from 'ui/components/google-map/GoogleMap';
 import { PH_BOUNDS } from '../constants';
 import { LayerGroup, LayersControl, Polygon, Tooltip } from 'react-leaflet';
 import useStartupByAddressList from '../hooks/useStartupByAddressList';
@@ -16,14 +16,9 @@ const getList = (array: TList[] | undefined) => {
   });
 };
 
-const filter = {
-  per_page: 1000,
-  level: 'all',
-};
-
 const Map = () => {
   const { data, isFetching: isFetchingStartup } =
-    useStartupByAddressList(filter);
+    useStartupByAddressList();
   const list = getList(data?.list);
 
   const getMinMaxCount = useMemo(() => {
@@ -44,14 +39,14 @@ const Map = () => {
     const { minCount, maxCount } = getMinMaxCount;
     const range = maxCount - minCount;
     if (range === 0) {
-      return 0.8; // Default opacity if all values are the same
+      return 0.5; // Default opacity if all values are the same
     }
     const normalizedCount = (count - minCount) / range;
-    return normalizedCount - 0.2;
+    return Math.max(0.2, Math.min(0.8, normalizedCount));
   };
 
   return (
-    <GoogleMap>
+    <OpenLayerMap>
       <LayersControl position="topright">
         {list.map((region) => (
           <LayersControl.Overlay
@@ -65,21 +60,22 @@ const Map = () => {
                   key={province.name}
                   positions={province.coords}
                   pathOptions={{
-                    color: 'red',
+                    color: '#dc2626',
                     weight: 1,
+                    fillColor: '#ef4444',
                     fillOpacity: getFillOpacity(region.count),
                   }}
                 >
-                  <Tooltip>
-                    <p className="font-semibold">{region.region}</p>
-                    <p className="text-gray-600 text-xs">
-                      Total Startup Count:{' '}
-                      <span className="font-semibold">{region.count}</span>
-                    </p>
-                    <p className="text-gray-600 text-xs">
-                      Province:{' '}
-                      <span className="font-semibold">{province.name}</span>
-                    </p>
+                  <Tooltip sticky>
+                    <div className="p-1">
+                      <p className="font-semibold text-sm">{region.region}</p>
+                      <p className="text-gray-600 text-xs">
+                        Province: <span className="font-semibold">{province.name}</span>
+                      </p>
+                      <p className="text-gray-600 text-xs">
+                        Total Startups: <span className="font-semibold">{region.count}</span>
+                      </p>
+                    </div>
                   </Tooltip>
                 </Polygon>
               ))}
@@ -87,7 +83,7 @@ const Map = () => {
           </LayersControl.Overlay>
         ))}
       </LayersControl>
-    </GoogleMap>
+    </OpenLayerMap>
   );
 };
 

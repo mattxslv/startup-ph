@@ -15,6 +15,7 @@ type TStartUp = {
   founding_year: string;
   id: string;
   is_verified: 0 | 1;
+  is_test_account: boolean;
   logo_url: string;
   municipality_code: string;
   name: string;

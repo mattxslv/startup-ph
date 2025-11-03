@@ -1,6 +1,8 @@
 import HeatMap from './HeatMap';
 import Overview from './Overview';
 import LatestStartup from './LatestStartup';
+import ComprehensiveStatistics from './ComprehensiveStatistics';
+import { ExpiringPermitsCard } from './ExpiringPermitsCard';
 import { toPng } from 'html-to-image';
 import { useCallback, useRef } from 'react';
 import { Acl } from 'features/profile';
@@ -27,6 +29,8 @@ function Dashboard() {
   return (
     <div className="space-y-3" ref={ref}>
       <Overview onExport={onButtonClick} />
+      <ComprehensiveStatistics />
+      {/* <ExpiringPermitsCard /> */}
       <HeatMap />
       <Acl code={['startups-view']}>
         <LatestStartup />

@@ -15,6 +15,7 @@ use App\Models\Startups\Traits\WithStartupFilters;
 use App\Models\Users\User;
 use App\Services\SerialNumberService;
 use App\Traits\WithAddressAttributeTrait;
+use App\Traits\DetectsTestAccounts;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,7 @@ class Startup extends Model implements Auditable, WithFileUploadContract
     use StartupHasApplications;
     use StartupHasPrograms;
     use StartupHasFileUploads;
+    use DetectsTestAccounts;
 
     public const RESOURCE_KEY = 'startups';
 
@@ -71,6 +73,8 @@ class Startup extends Model implements Auditable, WithFileUploadContract
         'business_mobile_no',
         'tin',
         'registration_no',
+        'dti_permit_number',
+        'sec_permit_number',
         'proof_of_registration_url',
         'business_certificate_expiration_date',
         'sectors',
@@ -82,6 +86,7 @@ class Startup extends Model implements Auditable, WithFileUploadContract
         'remarks',
         'assessment_tags',
         'is_verified',
+        'is_test_account',
         'submitted_at',
         'oath_accepted_at',
         'verified_at',
@@ -122,6 +127,7 @@ class Startup extends Model implements Auditable, WithFileUploadContract
         // 'is_active',
         // 'is_application_completed',
         'is_verified',
+        'is_test_account',
         'sector',
         'development_phase',
         'q',

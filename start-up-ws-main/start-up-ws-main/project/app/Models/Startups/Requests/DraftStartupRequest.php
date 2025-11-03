@@ -48,6 +48,8 @@ class DraftStartupRequest extends FormRequest
             'business_name' => ['nullable', 'max:100'],
             'tin' => ['nullable', 'max:100', Rule::unique('startups', 'tin')->ignore(User::authenticated()->startup)],
             'registration_no' => ['nullable', 'max:100'],
+            'dti_permit_number' => ['nullable', 'max:100', 'required_without:sec_permit_number'],
+            'sec_permit_number' => ['nullable', 'max:100', 'required_without:dti_permit_number'],
             'proof_of_registration_url' => ['nullable', 'url', 'max:255'],
             'business_certificate_expiration_date' => ['nullable', 'date'],
             'business_mobile_no' => ['nullable', 'max:100'],

@@ -52,6 +52,8 @@ function ListItem({
 function StartUps() {
   const { type } = useParams() as TStartupParams;
   const [filter, setFilter] = useState(INIT_FILTER_STATE);
+  const [hideTestAccounts, setHideTestAccounts] = useState(true);
+  
   const badgeFilter = [
     { label: 'Verified', value: 'VERIFIED' },
     { label: 'For Resubmission', value: 'FOR RESUBMISSION' },
@@ -62,8 +64,23 @@ function StartUps() {
     setFilter({
       ...INIT_FILTER_STATE,
       ...(type === 'for-verification' && { status: 'FOR VERIFICATION' }),
+      ...(hideTestAccounts && { is_test_account: '0' }),
     });
-  }, [type]);
+  }, [type, hideTestAccounts]);
+
+  const customFilters = (
+    <div className="px-3 py-2 border-b">
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={hideTestAccounts}
+          onChange={(e) => setHideTestAccounts(e.target.checked)}
+          className="rounded border-gray-300 text-primary focus:ring-primary"
+        />
+        <span className="text-sm text-gray-700">Hide Test Accounts</span>
+      </label>
+    </div>
+  );
 
   return (
     <ListView
@@ -74,6 +91,7 @@ function StartUps() {
       filter={filter}
       onFilterChange={setFilter}
       badgeFilter={type === 'for-verification' ? undefined : badgeFilter}
+      customFilters={customFilters}
     >
       {({ selected, resetSelected }) => {
         if (!selected?.id)

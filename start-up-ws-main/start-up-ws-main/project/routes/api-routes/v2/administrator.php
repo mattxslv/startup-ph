@@ -102,6 +102,12 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
             Route::post('startups/{startup}/return', [StartupController::class, 'returnForResubmision'])
                 ->middleware('ability:startups-return');
 
+            Route::patch('startups/{startup}/flag-test-account', [StartupController::class, 'flagTestAccount'])
+                ->middleware('ability:startups-manage');
+
+            Route::delete('startups/bulk-delete-test-accounts', [StartupController::class, 'bulkDeleteTestAccounts'])
+                ->middleware('ability:startups-manage');
+
             Route::get('startups/{startup}/applications', [StartupController::class, 'applications']);
         });
 
@@ -130,10 +136,13 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
 
         Route::prefix('dashboard')->group(function () {
             Route::get('statistics', [DashboardController::class, 'getStatictics']);
+            Route::get('comprehensive-statistics', [DashboardController::class, 'comprehensiveStatistics']);
             Route::get('startup_count', [DashboardController::class, 'getStartupCount']);
             Route::get('startup_by_address_code', [DashboardController::class, 'startupByAddressCode']);
+            Route::get('startup_by_regions', [DashboardController::class, 'startupByRegions']);
             Route::get('startup_by_status', [DashboardController::class, 'startupByStatus']);
             Route::get('startup_by_assessment_tags', [DashboardController::class, 'startupByAssessmentTags']);
+            Route::get('expiring_permits', [DashboardController::class, 'expiringPermits']);
             // Route::get('startup_by_address_geoloc', [DashboardController::class, 'startupByAddressGeoloc']);
         });
 

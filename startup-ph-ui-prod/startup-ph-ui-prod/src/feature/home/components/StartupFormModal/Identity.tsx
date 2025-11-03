@@ -44,7 +44,7 @@ const Identity = ({ onClose }: IProps) => {
             <LogoUploader
               value={values?.logo_url}
               onChange={(url) => setFieldValue('logo_url', url)}
-              maxFileSize={26214400}
+              maxFileSize={52428800}
             />
           </div>
 

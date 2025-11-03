@@ -1,5 +1,5 @@
 import { Button, Card } from 'ui/components';
-import StatsTable from './StatsTable';
+import RegionsTable from './RegionsTable';
 import { Form, useFormContext } from 'ui/forms';
 import { InputDatasetCommonOptions } from 'features/cms-dataset';
 import Map from './Map';
@@ -15,13 +15,13 @@ const HeatMap = () => {
           <HeatMapForm />
         </div>
 
-        <div className="flex gap-3 h-[500px]">
-          <div className="w-[60%]">
+        <div className="flex flex-col lg:flex-row gap-3 h-auto lg:h-[600px]">
+          <div className="w-full lg:w-[65%] h-[500px] lg:h-full">
             <Map />
           </div>
 
-          <div className="w-[40%]">
-            <StatsTable />
+          <div className="w-full lg:w-[35%]">
+            <RegionsTable />
           </div>
         </div>
       </Form>

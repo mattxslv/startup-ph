@@ -5,24 +5,26 @@ export const transform = (raw: any): TAddress => ({
   ...(raw?.name && { name: raw.name }),
 });
 
-export const transformStartupByAddress = (raw: any): TStartupByAddress => ({
-  total: raw?.total || 0,
-  key: raw?.regions
-    ? 'regions'
-    : raw?.provinces
-    ? 'provinces'
-    : raw?.municipalities
-    ? 'municipalities'
-    : 'barangays',
-  list:
-    raw?.regions ||
-    raw?.provinces ||
-    raw?.municipalities ||
-    raw?.barangays ||
-    [],
-  selected:
-    raw?.region || raw?.province || raw?.municipality || raw?.barangay || {},
-});
+export const transformStartupByAddress = (raw: any): TStartupByAddress => {
+  return {
+    total: raw?.total || 0,
+    key: raw?.regions
+      ? 'regions'
+      : raw?.provinces
+      ? 'provinces'
+      : raw?.municipalities
+      ? 'municipalities'
+      : 'barangays',
+    list:
+      raw?.regions ||
+      raw?.provinces ||
+      raw?.municipalities ||
+      raw?.barangays ||
+      [],
+    selected:
+      raw?.region || raw?.province || raw?.municipality || raw?.barangay || {},
+  };
+};
 
 export const transformStats = (raw: any): TStatistics => ({
   query_filter: raw?.query?.filter || '',

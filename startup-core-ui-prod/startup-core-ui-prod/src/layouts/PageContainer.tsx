@@ -8,7 +8,7 @@ interface Props {
 function PageContainer({ children, className }: Props) {
   return (
     <div
-      className={clsx('p-6 flex flex-col flex-1 container mx-auto', className)}
+      className={clsx('p-6 flex flex-col flex-1 w-full', className)}
     >
       {children}
     </div>

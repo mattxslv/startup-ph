@@ -8,6 +8,20 @@ export default defineConfig({
   define: {
     global: 'window',
   },
+  server: {
+    hmr: true,
+    watch: {
+      usePolling: true,
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Disable chunking to avoid cache issues
+        manualChunks: undefined,
+      },
+    },
+  },
   resolve: {
     alias: {
       src: path.resolve('src/'),

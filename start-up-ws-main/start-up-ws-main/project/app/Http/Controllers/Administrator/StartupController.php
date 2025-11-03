@@ -143,4 +143,50 @@ class StartupController extends Controller
 
         return ApplicationResources::collection($applications);
     }
+
+    /**
+     * Flag startup as test account
+     *
+     * @param Startup $startup
+     * @param Request $request
+     * @return StartupResources
+     */
+    public function flagTestAccount(Startup $startup, Request $request)
+    {
+        $request->validate([
+            'is_test_account' => 'required|boolean'
+        ]);
+
+        $startup->update([
+            'is_test_account' => $request->input('is_test_account')
+        ]);
+
+        // Also flag the user as test account
+        if ($startup->user) {
+            $startup->user->update([
+                'is_test_account' => $request->input('is_test_account')
+            ]);
+        }
+
+        return new StartupResources($startup->fresh());
+    }
+
+    /**
+     * Bulk delete test accounts
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function bulkDeleteTestAccounts(Request $request)
+    {
+        $deletedCount = Startup::where('is_test_account', true)->delete();
+        
+        // Also delete test users
+        \App\Models\Users\User::where('is_test_account', true)->delete();
+
+        return response()->json([
+            'message' => "Successfully deleted {$deletedCount} test accounts",
+            'deleted_count' => $deletedCount
+        ]);
+    }
 }

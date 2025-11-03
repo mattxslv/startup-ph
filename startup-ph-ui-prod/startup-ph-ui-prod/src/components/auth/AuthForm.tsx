@@ -30,12 +30,14 @@ interface IAuthForm extends Record<string, string> {
   email: string;
   password: string;
   password_confirmation: string;
+  user_type?: 'visitor' | 'startup' | 'enabler';
 }
 
 const getInitForm = (): IAuthForm => ({
   email: '',
   password: '',
   password_confirmation: '',
+  user_type: 'startup',
 });
 
 export function PasswordGuide({
@@ -116,6 +118,7 @@ function AuthForm() {
           sessionStorage.setItem('auth_email', payload.email);
           sessionStorage.setItem('password', payload.password);
           sessionStorage.setItem('passConfirmation', payload.password_confirmation);
+          sessionStorage.setItem('user_type', payload.user_type || 'startup');
 
           if (res === 'UNVERIFIED') {
             Toast.success('A 6-Digit-PIN has been sent to your email address.');
@@ -189,6 +192,42 @@ function AuthForm() {
       <div className='text-muted mb-8'>We just need a few details, and you’ll be on your way. </div>
       <Form className='flex-1 flex flex-col' initialValues={getInitForm()} onSubmit={handleSubmit}>
         <div className='space-y-3 mb-6'>
+          <div className='flex flex-col gap-2'>
+            <label className='text-sm font-medium text-gray-700'>I am a...</label>
+            <div className='flex gap-4'>
+              <label className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='radio'
+                  name='user_type'
+                  value='startup'
+                  defaultChecked
+                  className='form-radio text-primary focus:ring-primary'
+                />
+                <span className='text-sm'>Startup</span>
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='radio'
+                  name='user_type'
+                  value='visitor'
+                  className='form-radio text-primary focus:ring-primary'
+                />
+                <span className='text-sm'>Visitor</span>
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='radio'
+                  name='user_type'
+                  value='enabler'
+                  className='form-radio text-primary focus:ring-primary'
+                />
+                <span className='text-sm'>Enabler</span>
+              </label>
+            </div>
+            <p className='text-xs text-muted'>
+              Select 'Startup' if you're registering a business, 'Visitor' if you're just browsing, or 'Enabler' if you're supporting startups.
+            </p>
+          </div>
           <div className=' flex flex-col gap-2'>
             <Input name='email' label='Email Address' required autoFocus />
             <p className='text-xs text-muted'>

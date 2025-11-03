@@ -22,7 +22,7 @@ function NavHeader() {
     <>
       {/* for desktop */}
       <div className="border-b bg-white sticky top-0 z-20">
-        <div className="h-[63px] container mx-auto flex items-center px-6">
+        <div className="h-[63px] w-full px-6 flex items-center">
           <div className="mr-6 md:hidden">
             <Button onClick={() => setShowSidebar(!showSidebar)}>
               <HiMenu />{' '}

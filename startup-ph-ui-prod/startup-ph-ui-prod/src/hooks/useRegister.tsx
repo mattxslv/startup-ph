@@ -6,6 +6,7 @@ export interface IRegisterForm {
   password: string;
   password_confirmation: string;
   pin: string;
+  user_type?: 'visitor' | 'startup' | 'enabler';
   captcha?: string | null;
 }
 

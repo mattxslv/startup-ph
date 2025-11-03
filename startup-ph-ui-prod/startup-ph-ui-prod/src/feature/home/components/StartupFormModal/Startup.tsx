@@ -19,10 +19,20 @@ const validationSchema = yup.object().shape({
   founding_year: yup.string().required('Required'),
   tin: yup.string().required('Required'),
   registration_no: yup.string().required('Required'),
+  dti_permit_number: yup.string().when('sec_permit_number', {
+    is: (val: string) => !val || val.length === 0,
+    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  sec_permit_number: yup.string().when('dti_permit_number', {
+    is: (val: string) => !val || val.length === 0,
+    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
+    otherwise: (schema) => schema.nullable(),
+  }),
   proof_of_registration_url: yup.string().required('Required'),
   business_classification: yup.string().required('Required'),
   business_certificate_expiration_date: yup.string().required('Required'),
-});
+}, [['dti_permit_number', 'sec_permit_number']]);
 
 interface IProps {
   onClose: () => void;
@@ -84,16 +94,32 @@ const Startup = ({ onClose }: IProps) => {
 
           <div className='flex gap-5'>
             <Input
+              name='dti_permit_number'
+              label='DTI Permit Number'
+              placeholder='Enter DTI Registration Number'
+              note='Enter either DTI or SEC number (at least one is required)'
+            />
+
+            <Input
+              name='sec_permit_number'
+              label='SEC Permit Number'
+              placeholder='Enter SEC Registration Number'
+              note='Enter either DTI or SEC number (at least one is required)'
+            />
+          </div>
+
+          <div className='flex gap-5'>
+            <Input
               name='registration_no'
-              label='DTI/SEC Registration Number *'
-              placeholder='Enter DTI or SEC number'
-              note='Please enter your DTI Registration Number or SEC Number. Ensure this matches your proof of registration document.'
+              label='Business Registration Number *'
+              placeholder='Enter business registration number'
+              note='Enter your main business registration number'
               required
             />
 
             <InputDateV2
               name='business_certificate_expiration_date'
-              label='Expiration Date *'
+              label='Permit Expiration Date *'
               required
               minDate={new Date()}
             />

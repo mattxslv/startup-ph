@@ -12,8 +12,9 @@ import StartUpDetails from './StartUpDetails';
 import StartupStatusBadge from './StartupStatusBadge';
 import StartUpPage from './StartUpPage';
 import { useVerifyStartUp } from '../hooks/useStartUpMutate';
+import useFlagTestAccount from '../hooks/useFlagTestAccount';
 import { showStartupReturnModal } from '../modal/StartupReturnModal';
-import { HiCheckCircle, HiXCircle } from 'react-icons/hi';
+import { HiCheckCircle, HiXCircle, HiFlag } from 'react-icons/hi';
 import { Acl } from 'features/profile';
 import ProgramsParticipatedPage from './ProgramsParticipatedPage';
 
@@ -25,6 +26,8 @@ type Props = {
 function StartUpById({ id, resetSelected }: Props) {
   const { isFetching, data } = useStartupById(id);
   const verifyer = useVerifyStartUp();
+  const flagTestAccount = useFlagTestAccount();
+  
   const handleVerify = () => {
     showAlert({
       message: 'Are you sure you want to approve?',
@@ -41,6 +44,27 @@ function StartUpById({ id, resetSelected }: Props) {
       },
       yesLabel: 'Verify',
       variant: 'primary',
+    });
+  };
+
+  const handleToggleTestFlag = () => {
+    const isCurrentlyTest = data?.is_test_account || false;
+    showAlert({
+      message: isCurrentlyTest
+        ? 'Remove test account flag?'
+        : 'Flag this startup as a test account?',
+      onYes: (closeAlert) => {
+        flagTestAccount.mutate(
+          { id, is_test_account: !isCurrentlyTest },
+          {
+            onSuccess: () => {
+              closeAlert();
+            },
+          }
+        );
+      },
+      yesLabel: isCurrentlyTest ? 'Remove Flag' : 'Flag as Test',
+      variant: isCurrentlyTest ? 'primary' : 'warning',
     });
   };
   // const handleReturn = () => {
@@ -86,7 +110,12 @@ function StartUpById({ id, resetSelected }: Props) {
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <div className="ml-auto">
+            <div className="ml-auto flex gap-2 items-center">
+              {data.is_test_account && (
+                <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full font-semibold">
+                  TEST ACCOUNT
+                </span>
+              )}
               <StartupStatusBadge value={data.status} />
             </div>
             {data.status === 'FOR VERIFICATION' && (
@@ -112,6 +141,17 @@ function StartUpById({ id, resetSelected }: Props) {
                 </Acl>
               </div>
             )}
+            <Acl code={['startups-manage']}>
+              <Button
+                variant={data.is_test_account ? 'primary' : 'outline'}
+                size="sm"
+                className="w-full"
+                onClick={handleToggleTestFlag}
+                leadingIcon={<HiFlag className="h-4 w-4" />}
+              >
+                {data.is_test_account ? 'Remove Test Flag' : 'Flag as Test Account'}
+              </Button>
+            </Acl>
           </div>
         </div>
       </div>

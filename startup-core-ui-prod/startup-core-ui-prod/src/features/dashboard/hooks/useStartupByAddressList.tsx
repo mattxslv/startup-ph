@@ -9,7 +9,7 @@ const fetchList =
   async ({ signal }: QueryFunctionContext) =>
     ws.get<TStartupByAddress>(
       {
-        url: `/api/v2/administrator/dashboard/startup_by_address_code`,
+        url: `/api/v2/administrator/dashboard/startup_by_regions`,
         params: removeEmptyValues(params),
         transform: ({ data }) =>
           transformStartupByAddress(data?.statistics || {}),
@@ -19,7 +19,7 @@ const fetchList =
 
 const useStartupByAddressList = (params?: any) => {
   const query = useQuery({
-    queryKey: [`STATISTICS`, JSON.stringify(params)],
+    queryKey: [`STATISTICS_REGIONS`, JSON.stringify(params)],
     queryFn: fetchList(params),
   });
 

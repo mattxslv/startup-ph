@@ -8,6 +8,7 @@ use App\Models\Users\Traits\UserAttributeChecks;
 use App\Models\Users\Traits\UserHasFileUploads;
 use App\Models\Users\Traits\WithStartupsTrait;
 use App\Traits\WithAddressAttributeTrait;
+use App\Traits\DetectsTestAccounts;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,12 +24,15 @@ class User extends Authenticatable implements Auditable, WithFileUploadContract
     use UserAttributeChecks;
     use MustVerifyEmail;
     use UserHasFileUploads;
+    use DetectsTestAccounts;
 
     public const RESOURCE_KEY = 'users';
 
     public const FILLABLES = [
         'email',
         'email_verified_at',
+        'is_test_account',
+        'user_type',
         'mobile_no',
         'mobile_no_verified_at',
         'first_name',
@@ -91,7 +95,30 @@ class User extends Authenticatable implements Auditable, WithFileUploadContract
      */
     protected $hidden = [
         'password',
+        'remember_token',
     ];
+
+    /**
+     * Boot the model
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            // Auto-flag test accounts on creation
+            $user->autoFlagTestAccount();
+        });
+
+        static::updating(function ($user) {
+            // Re-check test account status on email/name change
+            if ($user->isDirty(['email', 'first_name', 'name'])) {
+                $user->autoFlagTestAccount();
+            }
+        });
+    }
 
     /**
      * Authenticated

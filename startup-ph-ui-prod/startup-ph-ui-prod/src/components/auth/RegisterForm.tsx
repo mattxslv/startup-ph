@@ -22,6 +22,7 @@ const getInitForm = (): IRegisterForm => ({
   email: sessionStorage.getItem('auth_email') || '',
   password: sessionStorage.getItem('password') || '',
   password_confirmation: sessionStorage.getItem('passConfirmation') || '',
+  user_type: (sessionStorage.getItem('user_type') as 'visitor' | 'startup' | 'enabler') || 'startup',
   pin: '',
   captcha: null,
 });

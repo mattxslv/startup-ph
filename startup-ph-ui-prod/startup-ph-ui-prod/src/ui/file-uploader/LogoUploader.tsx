@@ -18,7 +18,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({
   onChange,
   onDelete,
   disabled = false,
-  maxFileSize = 26214400, // 25MB
+  maxFileSize = 52428800, // 50MB
   className = '',
 }) => {
   const [showCropModal, setShowCropModal] = useState(false);
