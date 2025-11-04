@@ -11,7 +11,7 @@ const RegionsTable = () => {
   return (
     <div className="flex flex-col h-full rounded-md border">
       <div className="px-4 py-2 flex flex-col gap-1 bg-blue-600 w-full text-white">
-        <p className="font-bold text-sm">📍 REGIONS (NEW COMPONENT)</p>
+        <p className="font-bold text-sm">REGIONS</p>
         <small className="text-xs font-semibold uppercase">
           Total: {total} | Count: {regions.length} | Loading: {isFetching ? 'YES' : 'NO'}
         </small>

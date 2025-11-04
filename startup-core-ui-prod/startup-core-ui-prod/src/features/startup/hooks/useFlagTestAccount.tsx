@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { showToast } from 'ui/components';
-import { api } from 'lib/api-client';
+import { Toast } from 'ui/components';
+import * as ws from 'lib/ws/service';
 
 type FlagTestAccountParams = {
   id: string;
@@ -12,24 +12,21 @@ const useFlagTestAccount = () => {
 
   return useMutation({
     mutationFn: ({ id, is_test_account }: FlagTestAccountParams) =>
-      api.patch(`/administrator/startups/${id}/flag-test-account`, {
-        is_test_account,
+      ws.patch({
+        url: `/administrator/startups/${id}/flag-test-account`,
+        payload: { is_test_account },
       }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['STARTUPS'] });
       queryClient.invalidateQueries({ queryKey: ['STARTUP', variables.id] });
-      showToast({
-        variant: 'success',
-        message: variables.is_test_account
+      Toast.success(
+        variables.is_test_account
           ? 'Startup flagged as test account'
-          : 'Test account flag removed',
-      });
+          : 'Test account flag removed'
+      );
     },
     onError: () => {
-      showToast({
-        variant: 'danger',
-        message: 'Failed to flag test account',
-      });
+      Toast.error('Failed to flag test account');
     },
   });
 };

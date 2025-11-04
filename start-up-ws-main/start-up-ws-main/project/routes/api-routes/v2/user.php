@@ -42,9 +42,9 @@ Route::prefix('user')->middleware('throttle:api')->group(function () {
             Route::get('available_programs', [StartupProgramController::class, 'availablePrograms']);
             Route::get('available_programs/{program}', [StartupProgramController::class, 'showAvailablePrograms']);
 
-            Route::apiResource('requirements', StartupRequirementController::class)->only('index', 'store');
+            Route::apiResource('requirements', StartupRequirementController::class)->only('index', 'store')->names('user.startup.requirements');
 
-            Route::apiResource('applications', StartupApplicationController::class)->only('index', 'store', 'show');
+            Route::apiResource('applications', StartupApplicationController::class)->only('index', 'store', 'show')->names('user.startup.applications');
             Route::post('applications/{application}/resubmit', [StartupApplicationController::class, 'resubmit']);
         });
     });

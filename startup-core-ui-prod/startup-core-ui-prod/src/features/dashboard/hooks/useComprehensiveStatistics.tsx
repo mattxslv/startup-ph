@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from 'lib/api-client';
+import * as ws from 'lib/ws/service';
 
 export interface DashboardStatistics {
   overview: {
@@ -24,11 +24,11 @@ const useComprehensiveStatistics = (filters?: any) => {
   return useQuery({
     queryKey: ['COMPREHENSIVE_STATISTICS', filters],
     queryFn: async () => {
-      const response = await api.get<DashboardStatistics>(
-        '/administrator/dashboard/comprehensive-statistics',
-        { params: filters }
-      );
-      return response.data;
+      const response = await ws.get<DashboardStatistics>({
+        url: '/administrator/dashboard/comprehensive-statistics',
+        params: filters,
+      });
+      return response;
     },
   });
 };

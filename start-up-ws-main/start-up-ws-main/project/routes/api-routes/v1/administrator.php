@@ -122,9 +122,13 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
             });
 
             Route::middleware('ability:requirements-view')->group(function () {
-                Route::apiResource('requirements', RequirementController::class)->only(['index', 'show']);
+                Route::apiResource('requirements', RequirementController::class)->only(['index', 'show'])->names('admin.v1.requirements');
                 Route::apiResource('requirements', RequirementController::class)->except(['index', 'show'])
-                    ->middleware('ability:requirements-manage');
+                    ->middleware('ability:requirements-manage')->names([
+                        'store' => 'admin.v1.requirements.store',
+                        'update' => 'admin.v1.requirements.update',
+                        'destroy' => 'admin.v1.requirements.destroy'
+                    ]);
             });
 
             Route::middleware('ability:remarks-view')->group(function () {

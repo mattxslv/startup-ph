@@ -39,9 +39,17 @@ export const useSaveStartup = () => {
 export const useSubmitStartup = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: Partial<TStartup> }) => {
-      const processedPayload = { ...payloadProject(payload), is_oath_accepted: 1 };
+      const anyPayload = payload as any;
+      const processedPayload = { 
+        ...payloadProject(payload), 
+        is_oath_accepted: 1,
+        // Map registration_no to dti_permit_number if not already provided
+        dti_permit_number: anyPayload.dti_permit_number || anyPayload.registration_no || '',
+      };
       console.log('🚀 Original payload:', payload);
       console.log('🚀 Processed payload:', processedPayload);
+      console.log('🚀 Processed payload keys:', Object.keys(processedPayload));
+      console.log('🚀 Processed payload JSON:', JSON.stringify(processedPayload, null, 2));
       return await ws.post({
         url: '/api/v2/user/startup/get_verified',
         payload: processedPayload,

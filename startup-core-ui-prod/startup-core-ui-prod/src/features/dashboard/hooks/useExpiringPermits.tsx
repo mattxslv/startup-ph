@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { api } from 'lib/api-client';
+import * as ws from 'lib/ws/service';
 
 interface ExpiringPermitsParams {
   days_ahead?: number;
@@ -28,11 +28,11 @@ export const useExpiringPermits = (params: ExpiringPermitsParams = {}) => {
   return useQuery<ExpiringPermitsResponse>({
     queryKey: ['expiring-permits', params],
     queryFn: async () => {
-      const response = await api.get<ExpiringPermitsResponse>(
-        '/administrator/dashboard/expiring_permits',
-        { params }
-      );
-      return response.data;
+      const response = await ws.get<ExpiringPermitsResponse>({
+        url: '/administrator/dashboard/expiring_permits',
+        params,
+      });
+      return response;
     },
   });
 };

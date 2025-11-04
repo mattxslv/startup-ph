@@ -55,8 +55,9 @@ return [
         'stack' => [
             'driver' => 'stack',
             'channels' => [
+                'daily',
                 // 'slack',
-                'cloudwatch'
+                // 'cloudwatch'
             ],
             'ignore_exceptions' => false,
         ],

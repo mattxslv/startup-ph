@@ -40,7 +40,7 @@ COPY /ops/docker/fpm/user.ini /usr/local/etc/php/conf.d/user.ini
 
 RUN chmod +x /var/www/html/entry-point.sh
 
-RUN php artisan optimize
+# RUN php artisan optimize
 
 RUN chmod -R 777 storage
 

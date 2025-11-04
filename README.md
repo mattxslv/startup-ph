@@ -127,10 +127,11 @@ After setup completes, access:
 
 ## 🔑 Default Credentials
 
-### Admin Account
+### Admin Account (Dashboard)
 - **Email:** admin@dict.gov.ph
-- **Password:** password
+- **Password:** Dict2023!
 - **Role:** Administrator
+- **Dashboard URL:** http://localhost:5174
 
 ### Database
 - **Database:** startup_ph
@@ -339,7 +340,3 @@ This project is property of the Department of Information and Communications Tec
 - **DICT** - Department of Information and Communications Technology
 - **eGov PH** - For SSO and Upload Widget integration
 - **Philippine Startup Community** - For valuable feedback
-
----
-
-**Built with ❤️ for the Philippine Startup Ecosystem**

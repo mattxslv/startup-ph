@@ -61,9 +61,13 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
             });
 
             Route::middleware('ability:requirements-view')->group(function () {
-                Route::apiResource('requirements', RequirementController::class)->only(['index', 'show']);
+                Route::apiResource('requirements', RequirementController::class)->only(['index', 'show'])->names('admin.requirements');
                 Route::apiResource('requirements', RequirementController::class)->except(['index', 'show'])
-                    ->middleware('ability:requirements-manage');
+                    ->middleware('ability:requirements-manage')->names([
+                        'store' => 'admin.requirements.store',
+                        'update' => 'admin.requirements.update',
+                        'destroy' => 'admin.requirements.destroy'
+                    ]);
             });
 
             Route::middleware('ability:news-view')->group(function () {
@@ -122,7 +126,7 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
         });
 
         Route::middleware('ability:applications-view')->group(function () {
-            Route::apiResource('applications', ApplicationController::class)->only(['index', 'show']);
+            Route::apiResource('applications', ApplicationController::class)->only(['index', 'show'])->names('admin.applications');
 
             Route::post('applications/{application}/approve', [ApplicationController::class, 'approve'])
                 ->middleware('ability:applications-approve');

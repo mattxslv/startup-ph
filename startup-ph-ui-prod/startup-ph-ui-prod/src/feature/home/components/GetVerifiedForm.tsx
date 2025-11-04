@@ -1,5 +1,5 @@
 import Form from '@/ui/form/Form';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import * as yup from 'yup';
 import { TStartup } from '../../startup/types';
 import { FormikHelpers } from 'formik';
@@ -16,6 +16,8 @@ import { HiUpload } from 'react-icons/hi';
 import { showVerifySuccessModal } from '@/components/partial/VerifySuccessModal';
 import useMyStartup from '../../startup/hooks/useMyStartup';
 import { useSubmitStartup, useResubmitStartup } from '../../startup/hooks/useStartupMutate';
+import { FormContext } from '@/ui/form/context';
+import { useFormContext } from '@/ui/form/hooks';
 
 const handleOath = (e: any) => {
   e.preventDefault();
@@ -31,6 +33,7 @@ const validationSchema = yup.object().shape({
   business_classification: yup.string().required('Required'),
   development_phase: yup.string().required('Required'),
   proof_of_registration_url: yup.string().required('Required'),
+  is_oath_accepted: yup.boolean().oneOf([true], 'You must accept the Oath of Undertaking and Consent'),
 });
 
 export const GetVerifiedFields = () => {
@@ -108,11 +111,48 @@ export const GetVerifiedFields = () => {
     </div>
   );
 };
+
+const SubmitButton = () => {
+  const formik = useContext(FormContext);
+  const values = formik?.values as TStartup & { is_oath_accepted: boolean };
+  const isSubmitting = formik?.isSubmitting || false;
+  
+  return (
+    <Button
+      className='ml-auto md:ml-0'
+      variant='primary'
+      type='submit'
+      disabled={isSubmitting || !values?.is_oath_accepted}
+    >
+      Submit
+    </Button>
+  );
+};
+
+const CheckboxField = ({ name }: { name: string }) => {
+  const { values, setFieldValue } = useFormContext();
+  const checked = values[name] || false;
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFieldValue(name, e.target.checked);
+  };
+  
+  return (
+    <input
+      className='form-checkbox rounded'
+      type='checkbox'
+      name={name}
+      title='tos'
+      checked={checked}
+      onChange={handleChange}
+    />
+  );
+};
+
 interface Props {
   onClose: () => void;
 }
 function GetVerifiedForm({ onClose }: Props) {
-  const [isOath, setIsOath] = useState(false);
   const { data } = useMyStartup();
   // const formData: Partial<TStartup> = {
   //   tin: data?.tin,
@@ -170,6 +210,7 @@ function GetVerifiedForm({ onClose }: Props) {
     business_classification: data?.business_classification || '',
     development_phase: data?.development_phase || '',
     proof_of_registration_url: data?.proof_of_registration_url || '',
+    is_oath_accepted: false,
     // Include all other existing startup data
     ...data,
   };
@@ -187,13 +228,7 @@ function GetVerifiedForm({ onClose }: Props) {
       <div className='space-y-2 mb-6'>
         <GetVerifiedFields />
         <label className='text-gray-600 mt-4'>
-          <input
-            className='form-checkbox rounded'
-            type='checkbox'
-            title='tos'
-            onChange={(e) => setIsOath(e.target.checked)}
-            checked={isOath}
-          />
+          <CheckboxField name='is_oath_accepted' />
           <span className='ml-3 text-sm'>
             I hereby agree to the{' '}
             <a href='#' onClick={handleOath} className='text-primary font-bold hover:underline'>
@@ -213,15 +248,7 @@ function GetVerifiedForm({ onClose }: Props) {
         </Button>
 
         <span />
-        <Button
-          className='ml-auto md:ml-0'
-          variant='primary'
-          type='submit'
-          // disabled={mutator.isLoading || submitor.isLoading || !isOath}
-          disabled={submitor.isLoading || !isOath}
-        >
-          Submit
-        </Button>
+        <SubmitButton />
       </div>
     </Form>
   );

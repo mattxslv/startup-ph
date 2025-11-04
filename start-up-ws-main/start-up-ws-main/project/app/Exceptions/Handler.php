@@ -74,6 +74,11 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e) {
+            // Don't wrap validation exceptions - let Laravel handle them
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                return null;
+            }
+            
             if ($e instanceof \Illuminate\Database\QueryException) {
                 throw new QueryException($e);
             }
