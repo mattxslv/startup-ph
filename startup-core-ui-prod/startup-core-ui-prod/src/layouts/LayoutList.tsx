@@ -54,6 +54,7 @@ type Props<T> = {
   filter?: any;
   onFilterChange?: React.Dispatch<React.SetStateAction<any>>;
   badgeFilter?: Array<{ label: string; value: string | number }>;
+  customFilters?: React.ReactNode;
 };
 
 function ListView<T>({
@@ -64,6 +65,7 @@ function ListView<T>({
   filter = INIT_FILTER_STATE,
   onFilterChange,
   badgeFilter,
+  customFilters,
 }: Props<T>) {
   const [keyword, setKeyword] = useState('');
   const { isLoading, data } = useHook(filter);
@@ -141,6 +143,8 @@ function ListView<T>({
             <Badge className='text-gray-600 cursor-pointer'>Rejected</Badge> */}
           </div>
         )}
+
+        {customFilters}
 
         <div className="relative flex-1 min-h-[200px]">
           <div className="absolute inset-0 overflow-auto flex flex-col m-2">

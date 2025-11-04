@@ -54,6 +54,14 @@ trait WithStartupFilters
             $query->where('is_application_completed', $filters['is_application_completed']);
         }
 
+        if (isset($filters['is_test_account'])) {
+            // Convert string '0' or '1' to boolean, or keep boolean as is
+            $value = is_string($filters['is_test_account']) 
+                ? (bool) (int) $filters['is_test_account'] 
+                : (bool) $filters['is_test_account'];
+            $query->where('is_test_account', $value);
+        }
+
         if (isset($filters['q'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('name', 'like', '%' . $filters['q'] . '%')
@@ -93,6 +101,14 @@ trait WithStartupFilters
 
         if (isset($filters['is_verified'])) {
             array_push($query['bool']['must'], ['term' => ['is_verified' => $filters['is_verified']]]);
+        }
+
+        if (isset($filters['is_test_account'])) {
+            // Convert string '0' or '1' to boolean, or keep boolean as is
+            $value = is_string($filters['is_test_account']) 
+                ? (bool) (int) $filters['is_test_account'] 
+                : (bool) $filters['is_test_account'];
+            array_push($query['bool']['must'], ['term' => ['is_test_account' => $value]]);
         }
 
         if (isset($filters['region_code'])) {
