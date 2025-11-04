@@ -22,7 +22,7 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
     Route::post('two_factor_authenticate', [AuthenticationController::class, 'twoFactorAuthenticate'])
         ->middleware('throttle:authenticate');
 
-    Route::middleware(['auth:administrator', 'refresh.token'])->group(function () {
+    Route::middleware(['auth:administrator', 'refresh.token', 'regional.focal'])->group(function () {
         Route::get('profile', [AuthenticationController::class, 'showProfile']);
         Route::post('change_password', [AuthenticationController::class, 'changePassword']);
         Route::post('logout', [AuthenticationController::class, 'logout']);
@@ -148,6 +148,12 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
             Route::get('startup_by_assessment_tags', [DashboardController::class, 'startupByAssessmentTags']);
             Route::get('expiring_permits', [DashboardController::class, 'expiringPermits']);
             // Route::get('startup_by_address_geoloc', [DashboardController::class, 'startupByAddressGeoloc']);
+        });
+
+        Route::prefix('export')->middleware('ability:startups-view')->group(function () {
+            Route::get('startups/csv', [\App\Http\Controllers\Administrator\ExportController::class, 'exportStartupsCSV']);
+            Route::get('statistics/csv', [\App\Http\Controllers\Administrator\ExportController::class, 'exportStatisticsCSV']);
+            Route::get('report/pdf', [\App\Http\Controllers\Administrator\ExportController::class, 'generatePDFReport']);
         });
 
         Route::get('audits', AuditController::class)->middleware('ability:audits-view');

@@ -35,6 +35,8 @@ class Administrator extends Authenticatable implements Auditable
         'password',
         'auth_token',
         'auth_validated',
+        'region_code',
+        'is_regional_focal',
     ];
 
     public const FILTERS = [
@@ -157,5 +159,15 @@ class Administrator extends Authenticatable implements Auditable
     public function createResources(array $data): Resource
     {
         return $this->resources()->create($data);
+    }
+
+    /**
+     * Region relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function region()
+    {
+        return $this->belongsTo(\App\Models\Addresses\Regions\Region::class, 'region_code', 'code');
     }
 }

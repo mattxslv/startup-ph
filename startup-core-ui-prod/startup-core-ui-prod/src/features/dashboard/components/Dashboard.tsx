@@ -3,32 +3,29 @@ import Overview from './Overview';
 import LatestStartup from './LatestStartup';
 import ComprehensiveStatistics from './ComprehensiveStatistics';
 import { ExpiringPermitsCard } from './ExpiringPermitsCard';
-import { toPng } from 'html-to-image';
-import { useCallback, useRef } from 'react';
+import { ExportButtons } from './ExportButtons';
+import { useCallback, useState } from 'react';
 import { Acl } from 'features/profile';
 import ReturnReasonCounts from './ReturnReasonCounts';
 
 function Dashboard() {
-  const ref = useRef<HTMLDivElement>(null);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  
   const onButtonClick = useCallback(() => {
-    if (ref.current === null) {
-      return;
-    }
+    setShowExportMenu(!showExportMenu);
+  }, [showExportMenu]);
 
-    toPng(ref.current, { cacheBust: true })
-      .then((dataUrl) => {
-        const link = document.createElement('a');
-        link.download = 'dashboard.png';
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [ref]);
   return (
-    <div className="space-y-3" ref={ref}>
+    <div className="space-y-3">
       <Overview onExport={onButtonClick} />
+      
+      {showExportMenu && (
+        <div className="bg-white p-4 rounded-lg shadow">
+          <p className="text-sm font-semibold mb-3">Export Options</p>
+          <ExportButtons />
+        </div>
+      )}
+      
       <ComprehensiveStatistics />
       {/* <ExpiringPermitsCard /> */}
       <HeatMap />

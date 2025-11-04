@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
         'refresh.token' => \App\Http\Middleware\UpdateTokenExpiration::class,
+        'regional.focal' => \App\Http\Middleware\RegionalFocalFilter::class,
     ];
 }

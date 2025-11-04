@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Check for expired business permits daily at 2 AM
+        $schedule->command('startups:check-expired-permits')
+            ->dailyAt('02:00')
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**
