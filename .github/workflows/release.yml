@@ -1,0 +1,38 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Changes in this Release
+            
+            ### Features
+            - Laravel 10 Backend API
+            - Next.js 13 Frontend
+            - Vite Admin Dashboard
+            - OpenLayers Map Integration
+            - Docker Containerization
+            
+            ### Tech Stack
+            - **Backend:** Laravel 10, PHP 8.2, MySQL, Redis, Elasticsearch
+            - **Frontend:** Next.js 13, React 18, TailwindCSS
+            - **Dashboard:** Vite, React 18, OpenLayers
+            - **Infrastructure:** Docker, Nginx, Docker Compose
