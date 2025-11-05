@@ -1,22 +1,41 @@
 import { useRef, useState } from 'react';
 
-import { FilterAction, FilterWrapper, Form, Input } from 'ui/forms';
+import { FilterAction, FilterWrapper, Form, Input, InputSelect } from 'ui/forms';
 import useDebounceEffect from 'hooks/useDebounceEffect';
 
 export interface IFilter {
   page: number;
   per_page: number;
   q: string;
+  user_type?: string;
+  is_test_account?: string;
 }
 
 const KEY_LABEL = {
   q: 'Keyword Search',
+  user_type: 'User Type',
+  is_test_account: 'Test Accounts',
 };
+
+const USER_TYPE_OPTIONS = [
+  { label: 'All User Types', value: '' },
+  { label: 'Startup Owners', value: 'startup' },
+  { label: 'Enablers (Investors/Mentors)', value: 'enabler' },
+  { label: 'Visitors', value: 'visitor' },
+];
+
+const TEST_ACCOUNT_OPTIONS = [
+  { label: 'All Accounts', value: '' },
+  { label: 'Hide Test Accounts', value: '0' },
+  { label: 'Show Only Test Accounts', value: '1' },
+];
 
 export const INIT_FILTER_STATE: IFilter = {
   page: 1,
   per_page: 1000,
   q: '',
+  user_type: '',
+  is_test_account: '',
 };
 
 function ACLFilter({
@@ -34,8 +53,9 @@ function ACLFilter({
     filterRef.current.setDropdown(false);
     setFilter(v);
   };
+  
   return (
-    <div className="p-4">
+    <div className="p-4 space-y-4">
       <FilterWrapper
         ref={filterRef}
         isLoading={isLoading}
@@ -46,6 +66,24 @@ function ACLFilter({
         filterLabel="Adv"
         searchKey="q"
       />
+      
+      <div className="flex gap-3">
+        <InputSelect
+          name="user_type"
+          value={filter.user_type || ''}
+          onChange={(e) => setFilter({ ...filter, user_type: e.target.value, page: 1 })}
+          options={USER_TYPE_OPTIONS}
+          className="flex-1"
+        />
+        
+        <InputSelect
+          name="is_test_account"
+          value={filter.is_test_account || ''}
+          onChange={(e) => setFilter({ ...filter, is_test_account: e.target.value, page: 1 })}
+          options={TEST_ACCOUNT_OPTIONS}
+          className="flex-1"
+        />
+      </div>
     </div>
   );
 }

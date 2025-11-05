@@ -67,6 +67,8 @@ class User extends Authenticatable implements Auditable, WithFileUploadContract
 
     public const FILTERS = [
         'q',
+        'user_type',
+        'is_test_account',
     ];
 
     public const EMAIL_STATUS = [
@@ -146,6 +148,17 @@ class User extends Authenticatable implements Auditable, WithFileUploadContract
                     ->orWhere(self::RESOURCE_KEY . '.email', 'like', '%' . $filters['q'] . '%')
                     ->orWhere(self::RESOURCE_KEY . '.mobile_no', 'like', '%' . $filters['q'] . '%');
             });
+        }
+
+        if (isset($filters['user_type'])) {
+            $query->where('user_type', $filters['user_type']);
+        }
+
+        if (isset($filters['is_test_account'])) {
+            $isTestAccount = is_string($filters['is_test_account']) 
+                ? (bool) (int) $filters['is_test_account'] 
+                : (bool) $filters['is_test_account'];
+            $query->where('is_test_account', $isTestAccount);
         }
 
         return $query;

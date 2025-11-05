@@ -27,6 +27,7 @@ export interface IProfile {
   social_classification: string;
   suffix_name: string;
   last_login_at: string;
+  user_type?: 'visitor' | 'startup' | 'enabler';
   _is_profile_completed?: boolean;
   _is_profile_from_sso?: boolean;
   _is_email_verified: boolean;
@@ -92,6 +93,7 @@ const transformProfile = (raw: any): IProfile => ({
   social_classification: raw?.social_classification || '',
   suffix_name: raw?.suffix_name || '',
   last_login_at: raw?.last_login_at || '',
+  user_type: raw?.user_type || 'visitor',
   _is_profile_completed: !isEmpty(raw?.display_name),
   _is_profile_from_sso: Boolean(raw?.is_registered_from_sso),
   _is_email_verified: Boolean(raw?.email_verified_at),
