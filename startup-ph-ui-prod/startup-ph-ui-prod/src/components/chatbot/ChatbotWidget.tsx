@@ -57,6 +57,8 @@ export default function ChatbotWidget() {
       });
 
       const data = await response.json();
+      
+      console.log('Chatbot API Response:', data);
 
       if (data.success) {
         const assistantMessage: Message = {
@@ -66,12 +68,13 @@ export default function ChatbotWidget() {
         };
         setMessages((prev) => [...prev, assistantMessage]);
       } else {
-        throw new Error('Failed to get response');
+        throw new Error(data.error || 'Failed to get response');
       }
     } catch (error) {
+      console.error('Chatbot error:', error);
       const errorMessage: Message = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again or contact support.',
+        content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again or contact support.`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -122,6 +125,8 @@ export default function ChatbotWidget() {
       });
 
       const data = await response.json();
+      
+      console.log('Chatbot API Response (Quick Question):', data);
 
       if (data.success) {
         const assistantMessage: Message = {
@@ -131,12 +136,13 @@ export default function ChatbotWidget() {
         };
         setMessages((prev) => [...prev, assistantMessage]);
       } else {
-        throw new Error('Failed to get response');
+        throw new Error(data.error || 'Failed to get response');
       }
     } catch (error) {
+      console.error('Chatbot error (Quick Question):', error);
       const errorMessage: Message = {
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again or contact support.',
+        content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again or contact support.`,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
