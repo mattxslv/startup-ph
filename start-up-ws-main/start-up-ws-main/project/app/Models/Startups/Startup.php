@@ -48,6 +48,7 @@ class Startup extends Model implements Auditable, WithFileUploadContract
         'startup_number',
         'logo_url',
         'name',
+        'corporation_name',
         'slug',
         // 'address_label',
         // 'address_geoloc',

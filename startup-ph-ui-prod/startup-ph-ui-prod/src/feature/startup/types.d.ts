@@ -5,6 +5,7 @@ type TStartup = {
 
   logo_url: string;
   name: string;
+  corporation_name: string;
   description: string;
 
   // founder
@@ -35,6 +36,8 @@ type TStartup = {
   tin: string;
   permit_number: string;
   registration_no: string;
+  dti_permit_number: string;
+  sec_permit_number: string;
   proof_of_registration_url: string;
 
   status?: 'UNVERIFIED' | 'FOR VERIFICATION' | 'VERIFIED' | 'REJECTED' | 'FOR RESUBMISSION';

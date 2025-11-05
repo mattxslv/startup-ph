@@ -16,6 +16,7 @@ import * as yup from 'yup';
 
 const validationSchema = yup.object().shape({
   business_name: yup.string().required('Required'),
+  corporation_name: yup.string().nullable(),
   founding_year: yup.string().required('Required'),
   tin: yup.string().required('Required'),
   registration_no: yup.string().required('Required'),
@@ -67,7 +68,14 @@ const Startup = ({ onClose }: IProps) => {
             and will not be shared publicly. Field that has (*) is required to verify your Startup.
           </p>
 
-          <Input name='business_name' label='Registered Business/SEC Name *' required />
+          <Input name='business_name' label='Registered Business/Trade Name *' required />
+
+          <Input 
+            name='corporation_name' 
+            label='Corporation/Legal Name' 
+            placeholder='Enter legal corporation name (if different from business name)'
+            note='Optional: Enter your corporation name if it differs from your business/trade name (e.g., for corporations registered with SEC)'
+          />
 
           <InputYear
             name='founding_year'
