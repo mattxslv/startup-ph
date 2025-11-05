@@ -11,6 +11,7 @@ import '@/styles/globals.css';
 import 'aos/dist/aos.css';
 import ModalContainer from 'egov-upload-widget/modal-container';
 import { Provider as DrawerProvider } from '@/components/drawer';
+import ChatbotWidget from '@/components/chatbot/ChatbotWidget';
 
 export default function App({ Component, pageProps: { /* session, */ ...pageProps } }: AppProps) {
   return (
@@ -24,6 +25,7 @@ export default function App({ Component, pageProps: { /* session, */ ...pageProp
                 <SessionProvider>
                   <Component {...pageProps} />
                   <ModalContainer />
+                  <ChatbotWidget />
                 </SessionProvider>
               </ModalProvider>
             </DrawerProvider>

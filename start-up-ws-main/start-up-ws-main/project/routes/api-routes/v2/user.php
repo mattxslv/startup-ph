@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\User\AuthenticationController;
 use App\Http\Controllers\User\EGovSSOAuthController;
 use App\Http\Controllers\User\PasswordController;
@@ -12,6 +13,9 @@ use App\Http\Controllers\User\StartupRequirementController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('user')->middleware('throttle:api')->group(function () {
+    // Chatbot endpoint (public - no auth required)
+    Route::post('chatbot', [ChatbotController::class, 'chat']);
+    
     Route::middleware('throttle:authenticate')->group(function () {
         Route::post('email_sign_in', [RegistrationController::class, 'emailSignIn']);
         Route::post('register', [RegistrationController::class, 'register']);
