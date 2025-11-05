@@ -28,11 +28,6 @@ class ChatbotController extends Controller
             // Build conversation context
             $messages = $this->buildConversation($conversationHistory, $userMessage);
             
-            Log::info('Chatbot request', [
-                'message' => $userMessage,
-                'api_key_set' => !empty(config('services.gemini.api_key')),
-            ]);
-            
             // Call Gemini API
             $response = $this->callGeminiAPI($messages);
             
@@ -41,14 +36,12 @@ class ChatbotController extends Controller
                 'message' => $response,
             ]);
         } catch (\Exception $e) {
-            Log::error('Chatbot error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-            
+            // Return detailed error in development
             return response()->json([
                 'success' => false,
-                'message' => 'I apologize, but I\'m having trouble responding right now. Please try again or contact our support team.',
-                'error' => app()->environment('local') ? $e->getMessage() : null,
+                'message' => 'Something went wrong. Please try again later.',
+                'error' => $e->getMessage(),
+                'trace' => app()->environment('local') ? $e->getTraceAsString() : null,
             ], 500);
         }
     }

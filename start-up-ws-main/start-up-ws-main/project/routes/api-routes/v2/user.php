@@ -12,10 +12,10 @@ use App\Http\Controllers\User\StartupProgramController;
 use App\Http\Controllers\User\StartupRequirementController;
 use Illuminate\Support\Facades\Route;
 
+// Chatbot endpoint (public - no throttling, no auth required)
+Route::post('user/chatbot', [ChatbotController::class, 'chat']);
+
 Route::prefix('user')->middleware('throttle:api')->group(function () {
-    // Chatbot endpoint (public - no auth required)
-    Route::post('chatbot', [ChatbotController::class, 'chat']);
-    
     Route::middleware('throttle:authenticate')->group(function () {
         Route::post('email_sign_in', [RegistrationController::class, 'emailSignIn']);
         Route::post('register', [RegistrationController::class, 'register']);
