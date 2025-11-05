@@ -39,6 +39,33 @@ const MapWithRegions = ({ regions, className }: MapWithRegionsProps) => {
     count: number;
   } | null>(null);
 
+  // Color palette for different regions
+  const REGION_COLORS: { [key: string]: { fill: string; stroke: string } } = {
+    'REGION I (ILOCOS REGION)': { fill: '#3b82f6', stroke: '#2563eb' },
+    'REGION II (CAGAYAN VALLEY)': { fill: '#8b5cf6', stroke: '#7c3aed' },
+    'REGION III (CENTRAL LUZON)': { fill: '#ec4899', stroke: '#db2777' },
+    'REGION IV-A (CALABARZON)': { fill: '#f59e0b', stroke: '#d97706' },
+    'REGION IV-B (MIMAROPA)': { fill: '#84cc16', stroke: '#65a30d' },
+    'REGION V (BICOL REGION)': { fill: '#14b8a6', stroke: '#0d9488' },
+    'REGION VI (WESTERN VISAYAS)': { fill: '#06b6d4', stroke: '#0891b2' },
+    'REGION VII (CENTRAL VISAYAS)': { fill: '#6366f1', stroke: '#4f46e5' },
+    'REGION VIII (EASTERN VISAYAS)': { fill: '#a855f7', stroke: '#9333ea' },
+    'REGION IX (ZAMBOANGA PENINSULA)': { fill: '#ef4444', stroke: '#dc2626' },
+    'REGION X (NORTHERN MINDANAO)': { fill: '#f97316', stroke: '#ea580c' },
+    'REGION XI (DAVAO REGION)': { fill: '#10b981', stroke: '#059669' },
+    'REGION XII (SOCCSKSARGEN)': { fill: '#22c55e', stroke: '#16a34a' },
+    'REGION XIII (CARAGA)': { fill: '#eab308', stroke: '#ca8a04' },
+    'NCR (NATIONAL CAPITAL REGION)': { fill: '#dc2626', stroke: '#b91c1c' },
+    'CAR (CORDILLERA ADMINISTRATIVE REGION)': { fill: '#64748b', stroke: '#475569' },
+    'BARMM (BANGSAMORO AUTONOMOUS REGION IN MUSLIM MINDANAO)': { fill: '#0ea5e9', stroke: '#0284c7' },
+    'OTHERS': { fill: '#94a3b8', stroke: '#64748b' },
+  };
+
+  // Get color for region with fallback
+  const getRegionColor = (regionName: string) => {
+    return REGION_COLORS[regionName] || { fill: '#94a3b8', stroke: '#64748b' };
+  };
+
   // Calculate min and max counts for opacity
   const getMinMaxCount = () => {
     let minCount = Infinity;
@@ -53,9 +80,9 @@ const MapWithRegions = ({ regions, className }: MapWithRegionsProps) => {
   const getFillOpacity = (count: number) => {
     const { minCount, maxCount } = getMinMaxCount();
     const range = maxCount - minCount;
-    if (range === 0) return 0.5;
+    if (range === 0) return 0.6;
     const normalizedCount = (count - minCount) / range;
-    return Math.max(0.2, Math.min(0.8, normalizedCount));
+    return Math.max(0.3, Math.min(0.8, normalizedCount));
   };
 
   useEffect(() => {
@@ -76,6 +103,8 @@ const MapWithRegions = ({ regions, className }: MapWithRegionsProps) => {
 
     // Add features for each region's provinces
     regions.forEach((region) => {
+      const regionColors = getRegionColor(region.region);
+      
       region.provinces.forEach((province) => {
         // Convert coordinates from [lat, lng] to [lng, lat] and project
         const coordinates = province.coords.map((ring) =>
@@ -91,14 +120,23 @@ const MapWithRegions = ({ regions, className }: MapWithRegionsProps) => {
         });
 
         const opacity = getFillOpacity(region.count);
+        
+        // Convert hex color to rgba with dynamic opacity
+        const hexToRgba = (hex: string, alpha: number) => {
+          const r = parseInt(hex.slice(1, 3), 16);
+          const g = parseInt(hex.slice(3, 5), 16);
+          const b = parseInt(hex.slice(5, 7), 16);
+          return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
+        
         feature.setStyle(
           new Style({
             fill: new Fill({
-              color: `rgba(239, 68, 68, ${opacity})`, // #ef4444 with dynamic opacity
+              color: hexToRgba(regionColors.fill, opacity),
             }),
             stroke: new Stroke({
-              color: '#dc2626',
-              width: 1,
+              color: regionColors.stroke,
+              width: 1.5,
             }),
           })
         );
