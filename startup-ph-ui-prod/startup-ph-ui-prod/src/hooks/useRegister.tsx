@@ -6,7 +6,7 @@ export interface IRegisterForm {
   password: string;
   password_confirmation: string;
   pin: string;
-  user_type?: 'visitor' | 'startup' | 'enabler';
+  user_type?: 'visitor' | 'startup';
   captcha?: string | null;
 }
 
@@ -14,7 +14,7 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: IRegisterForm }) =>
       await ws.post({
-        url: '/api/v2/user/create-account',
+        url: '/api/v2/user/register',
         payload,
         transform: ({ data }) => ({
           token: data?.token,

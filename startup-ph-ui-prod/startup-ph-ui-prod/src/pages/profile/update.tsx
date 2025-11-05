@@ -16,10 +16,6 @@ const WELCOME_MESSAGES = {
     title: 'Welcome, Startup Founder!',
     description: 'Let\'s get your startup registered and verified. You\'re one step closer to accessing government programs and opportunities.',
   },
-  enabler: {
-    title: 'Welcome, Startup Enabler!',
-    description: 'Thank you for supporting the Philippine startup ecosystem. Help us connect you with startups that need your expertise.',
-  },
   visitor: {
     title: 'Welcome to Startup Philippines!',
     description: 'Explore the vibrant Philippine startup ecosystem. Discover innovative startups and learn about entrepreneurship programs.',

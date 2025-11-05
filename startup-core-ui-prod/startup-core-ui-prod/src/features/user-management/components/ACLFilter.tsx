@@ -19,9 +19,8 @@ const KEY_LABEL = {
 
 const USER_TYPE_OPTIONS = [
   { label: 'All User Types', value: '' },
-  { label: 'Startup Owners', value: 'startup' },
-  { label: 'Enablers (Investors/Mentors)', value: 'enabler' },
-  { label: 'Visitors', value: 'visitor' },
+  { label: 'Visitor', value: 'visitor' },
+  { label: 'Startup', value: 'startup' },
 ];
 
 const TEST_ACCOUNT_OPTIONS = [

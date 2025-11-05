@@ -27,7 +27,7 @@ export interface IProfile {
   social_classification: string;
   suffix_name: string;
   last_login_at: string;
-  user_type?: 'visitor' | 'startup' | 'enabler';
+  user_type?: 'visitor' | 'startup';
   _is_profile_completed?: boolean;
   _is_profile_from_sso?: boolean;
   _is_email_verified: boolean;

@@ -26,11 +26,11 @@ const RegisterForm = dynamic(() => import('./RegisterForm'), {
   loading: () => <div />,
 });
 
-interface IAuthForm extends Record<string, string> {
+interface IAuthForm {
   email: string;
   password: string;
   password_confirmation: string;
-  user_type?: 'visitor' | 'startup' | 'enabler';
+  user_type?: 'visitor' | 'startup';
 }
 
 const getInitForm = (): IAuthForm => ({
@@ -214,18 +214,9 @@ function AuthForm() {
                 />
                 <span className='text-sm'>Visitor</span>
               </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input
-                  type='radio'
-                  name='user_type'
-                  value='enabler'
-                  className='form-radio text-primary focus:ring-primary'
-                />
-                <span className='text-sm'>Enabler</span>
-              </label>
             </div>
             <p className='text-xs text-muted'>
-              Select 'Startup' if you're registering a business, 'Visitor' if you're just browsing, or 'Enabler' if you're supporting startups.
+              Select 'Startup' if you're registering a business, or 'Visitor' if you're just browsing.
             </p>
           </div>
           <div className=' flex flex-col gap-2'>
