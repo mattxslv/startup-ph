@@ -4,6 +4,7 @@ import { Button } from 'ui/components';
 import CountCard from './CountCard';
 import DateRange, { IValue } from './DateRange';
 import useDashboardTotalCount from '../hooks/useDashboardTotalCount';
+import useComprehensiveStatistics from '../hooks/useComprehensiveStatistics';
 import InputDateRange from './InputDateRange';
 
 const INIT_STATE: IValue = {
@@ -19,12 +20,20 @@ interface Props {
 const Overview = ({ onExport }: Props) => {
   const [filter, setFilter] = useState(INIT_STATE);
   const { isFetching, data: stats } = useDashboardTotalCount(filter);
+  const { data: comprehensiveStats } = useComprehensiveStatistics({});
+  
   const cards = [
     {
+      label: 'Total Startups',
+      value: comprehensiveStats?.overview?.total_startups || 0,
+      percent: 0,
+      trend: '',
+    },
+    {
       label: 'Verified Startups',
-      value: stats?.verified_current_count || 0,
-      percent: stats?.verified_trend_formatted_value || 0,
-      trend: stats?.verified_trend || '',
+      value: comprehensiveStats?.overview?.verified_startups || 0,
+      percent: 0,
+      trend: '',
     },
     {
       label: 'Registered Startups',
@@ -43,6 +52,12 @@ const Overview = ({ onExport }: Props) => {
       value: stats?.programs_current_count || 0,
       percent: stats?.programs_trend_formatted_value || 0,
       trend: stats?.programs_trend || '',
+    },
+    {
+      label: 'Total Users',
+      value: comprehensiveStats?.overview?.total_users || 0,
+      percent: 0,
+      trend: '',
     },
   ];
   const onChange = (newValue: Partial<IValue> | null) => {
@@ -75,7 +90,7 @@ const Overview = ({ onExport }: Props) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {cards.map((card, i) => (
           <CountCard key={i} {...card} isLoading={isFetching} />
         ))}

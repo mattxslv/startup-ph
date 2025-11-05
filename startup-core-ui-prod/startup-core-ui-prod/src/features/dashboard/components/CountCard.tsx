@@ -12,6 +12,11 @@ interface Props {
 
 function CountCard({ label, value, percent, trend, isLoading }: Props) {
   const trendPercent = () => {
+    // Don't show anything if there's no trend
+    if (!trend || trend === '') {
+      return null;
+    }
+    
     if (trend === 'upward')
       return (
         <div className="flex-shrink-0 flex items-center gap-1 text-green-500 text-xs font-semibold">
@@ -46,11 +51,7 @@ function CountCard({ label, value, percent, trend, isLoading }: Props) {
           )}
         </div>
       </div>
-      {isLoading ? (
-        <ImSpinner2 className="animate-spin text-gray-400" />
-      ) : (
-        trendPercent()
-      )}
+      {!isLoading && trendPercent()}
     </div>
   );
 }

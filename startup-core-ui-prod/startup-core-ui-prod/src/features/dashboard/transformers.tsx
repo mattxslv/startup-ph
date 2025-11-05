@@ -23,6 +23,8 @@ export const transformStartupByAddress = (raw: any): TStartupByAddress => {
       [],
     selected:
       raw?.region || raw?.province || raw?.municipality || raw?.barangay || {},
+    ...(raw?.startups && { startups: raw.startups }),
+    ...(raw?.startups_count !== undefined && { startups_count: raw.startups_count }),
   };
 };
 

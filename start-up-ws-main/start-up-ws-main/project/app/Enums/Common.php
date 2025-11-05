@@ -4,7 +4,10 @@ namespace App\Enums;
 
 class Common
 {
-    public const SUFFIX_NAMES = ['N/A', 'JR', 'SR', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+    public const SUFFIX_NAMES = [
+        'N/A', 'JR', 'SR', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
+        'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX'
+    ];
 
     public const GENDERS = [
         'Preferred not to say' => 'Preferred not to say',

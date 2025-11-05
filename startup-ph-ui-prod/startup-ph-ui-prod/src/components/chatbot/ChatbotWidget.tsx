@@ -157,18 +157,18 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className='fixed bottom-6 right-6 bg-primary text-white rounded-full p-4 shadow-lg hover:bg-primary-dark transition-all hover:scale-110 z-50'
+          className='fixed bottom-4 right-4 md:bottom-6 md:right-6 bg-primary text-white rounded-full p-3 md:p-4 shadow-lg hover:bg-primary-dark transition-all hover:scale-110 z-50'
           aria-label='Open chat'
         >
-          <HiChat className='w-6 h-6' />
+          <HiChat className='w-5 h-5 md:w-6 md:h-6' />
         </button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className='fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-gray-200'>
+        <div className='fixed inset-0 md:inset-auto md:bottom-6 md:right-6 md:w-96 md:h-[600px] w-full h-full bg-white md:rounded-lg shadow-2xl flex flex-col z-50 border-0 md:border md:border-gray-200'>
           {/* Header */}
-          <div className='bg-primary text-white p-4 rounded-t-lg flex justify-between items-center'>
+          <div className='bg-primary text-white p-4 md:rounded-t-lg flex justify-between items-center'>
             <div>
               <h3 className='font-semibold text-lg'>Startup Assistant 🚀</h3>
               <p className='text-xs text-blue-100'>Always here to help!</p>
@@ -236,7 +236,7 @@ export default function ChatbotWidget() {
           {messages.length === 1 && (
             <div className='px-4 pb-2'>
               <p className='text-xs text-gray-500 mb-2'>Quick questions:</p>
-              <div className='grid grid-cols-2 gap-2'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
                 {quickQuestions.map((question, index) => (
                   <button
                     key={index}

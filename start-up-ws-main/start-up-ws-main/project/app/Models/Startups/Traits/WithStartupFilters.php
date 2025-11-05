@@ -62,6 +62,31 @@ trait WithStartupFilters
             $query->where('is_test_account', $value);
         }
 
+        if (isset($filters['sector']) && !empty($filters['sector'])) {
+            // Filter by sector - sectors is stored as JSON array
+            $query->whereRaw('JSON_CONTAINS(sectors, ?)', [json_encode($filters['sector'])]);
+        }
+
+        if (isset($filters['development_phase'])) {
+            $query->where('development_phase', $filters['development_phase']);
+        }
+
+        if (isset($filters['region_code'])) {
+            $query->where('region_code', $filters['region_code']);
+        }
+
+        if (isset($filters['province_code'])) {
+            $query->where('province_code', $filters['province_code']);
+        }
+
+        if (isset($filters['municipality_code'])) {
+            $query->where('municipality_code', $filters['municipality_code']);
+        }
+
+        if (isset($filters['barangay_code'])) {
+            $query->where('barangay_code', $filters['barangay_code']);
+        }
+
         if (isset($filters['q'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('name', 'like', '%' . $filters['q'] . '%')

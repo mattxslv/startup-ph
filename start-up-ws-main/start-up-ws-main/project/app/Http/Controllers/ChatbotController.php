@@ -16,10 +16,19 @@ class ChatbotController extends Controller
      */
     public function chat(Request $request)
     {
-        $request->validate([
-            'message' => 'required|string|max:1000',
-            'conversation_history' => 'nullable|array',
-        ]);
+        try {
+            $validated = $request->validate([
+                'message' => 'required|string|max:1000',
+                'conversation_history' => 'nullable|array',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+            ], 422);
+        }
 
         $userMessage = $request->input('message');
         $conversationHistory = $request->input('conversation_history', []);
@@ -150,7 +159,10 @@ Now assist the user with their questions:";
             throw new \Exception('Gemini API key not configured');
         }
 
-        $response = Http::timeout(30)->post(
+        // Retry up to 2 times with longer timeout for slow connections
+        $response = Http::timeout(120)
+            ->retry(2, 1000)
+            ->post(
             'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=' . $apiKey,
             [
                 'contents' => [

@@ -148,24 +148,29 @@ class DashboardController extends Controller
     {
         $filters = $request->only(Startup::FILTERS);
         
+        // Add sector filter if provided
+        if ($request->has('sector') && !empty($request->sector)) {
+            $filters['sector'] = $request->sector;
+        }
+        
         // Overview metrics
         $overview = [
-            'total' => Startup::filter($filters)->count(),
-            'verified' => Startup::filter(array_merge($filters, ['status' => StartupEnum::STATUS['VERIFIED']]))->count(),
+            'total_startups' => Startup::filter($filters)->count(),
+            'verified_startups' => Startup::filter(array_merge($filters, ['status' => StartupEnum::STATUS['VERIFIED']]))->count(),
             'for_verification' => Startup::filter(array_merge($filters, ['status' => StartupEnum::STATUS['FOR VERIFICATION']]))->count(),
-            'rejected' => Startup::filter(array_merge($filters, ['status' => StartupEnum::STATUS['REJECTED']]))->count(),
-            'for_resubmission' => Startup::filter(array_merge($filters, ['status' => StartupEnum::STATUS['FOR RESUBMISSION']]))->count(),
+            'total_users' => \DB::table('users')->count(),
         ];
 
         // By city (top 10)
-        $byCity = Startup::filter($filters)
+        $byCityQuery = Startup::filter($filters)
             ->selectRaw('municipality_code, COUNT(*) as count')
             ->whereNotNull('municipality_code')
             ->groupBy('municipality_code')
             ->orderByDesc('count')
             ->limit(10)
-            ->get()
-            ->map(function ($item) {
+            ->get();
+
+        $byCity = $byCityQuery->map(function ($item) {
                 $municipality = \App\Models\Addresses\Municipalities\Municipality::find($item->municipality_code);
                 return [
                     'label' => $municipality ? $municipality->name : $item->municipality_code,
@@ -175,16 +180,24 @@ class DashboardController extends Controller
             });
 
         // By sector
-        $bySector = Startup::filter($filters)
+        $bySectorQuery = Startup::filter($filters)
             ->selectRaw('sectors, COUNT(*) as count')
             ->whereNotNull('sectors')
             ->where('sectors', '!=', '')
             ->groupBy('sectors')
             ->orderByDesc('count')
-            ->get()
-            ->map(function ($item) {
+            ->get();
+
+        $bySector = $bySectorQuery->map(function ($item) {
+                // Handle both string and array cases
+                if (is_string($item->sectors)) {
+                    $sectors = json_decode($item->sectors, true);
+                    $sectorName = is_array($sectors) && count($sectors) > 0 ? $sectors[0] : $item->sectors;
+                } else {
+                    $sectorName = is_array($item->sectors) && count($item->sectors) > 0 ? $item->sectors[0] : 'Unknown';
+                }
                 return [
-                    'label' => $item->sectors,
+                    'label' => $sectorName,
                     'count' => $item->count
                 ];
             });
@@ -206,26 +219,42 @@ class DashboardController extends Controller
             });
 
         // By development phase
-        $byPhase = Startup::filter($filters)
+        $byPhaseQuery = Startup::filter($filters)
             ->selectRaw('development_phase, COUNT(*) as count')
             ->whereNotNull('development_phase')
             ->groupBy('development_phase')
             ->orderByDesc('count')
-            ->get()
-            ->map(function ($item) {
+            ->get();
+
+        $byPhase = $byPhaseQuery->map(function ($item) {
                 return [
                     'label' => $item->development_phase,
                     'count' => $item->count
                 ];
             });
 
+        // By status
+        $byStatusQuery = Startup::filter($filters)
+            ->selectRaw('status, COUNT(*) as count')
+            ->whereNotNull('status')
+            ->groupBy('status')
+            ->orderByDesc('count')
+            ->get();
+
+        $byStatus = $byStatusQuery->map(function ($item) {
+                return [
+                    'label' => ucfirst($item->status ?? 'Unknown'),
+                    'count' => $item->count
+                ];
+            });
+
         // By user type (from users table)
-        $byUserType = \DB::table('users')
+        $userTypeQuery = \DB::table('users')
             ->join('startups', 'users.id', '=', 'startups.user_id')
             ->select('users.user_type', \DB::raw('COUNT(DISTINCT startups.id) as count'))
-            ->groupBy('users.user_type')
-            ->get()
-            ->map(function ($item) {
+            ->groupBy('users.user_type');
+
+        $byUserType = $userTypeQuery->get()->map(function ($item) {
                 return [
                     'label' => ucfirst($item->user_type ?? 'Unknown'),
                     'count' => $item->count
@@ -238,7 +267,12 @@ class DashboardController extends Controller
             'by_sector' => $bySector,
             'by_region' => $byRegion,
             'by_phase' => $byPhase,
-            'by_user_type' => $byUserType,
+            'by_status' => $byStatus,
+            'user_types' => [
+                'visitor' => $byUserType->firstWhere('label', 'Visitor')['count'] ?? 0,
+                'startup' => $byUserType->firstWhere('label', 'Startup')['count'] ?? 0,
+                'enabler' => $byUserType->firstWhere('label', 'Enabler')['count'] ?? 0,
+            ],
         ]);
     }
 
@@ -277,13 +311,77 @@ class DashboardController extends Controller
 
         $total = Startup::whereNotNull('region_code')->count();
 
-        return response()->json([
+        $response = [
             'statistics' => [
                 'total' => $total,
                 'key' => 'regions',
                 'regions' => $regions,
             ]
-        ]);
+        ];
+
+        // Determine which filter level to apply
+        $filterLevel = null;
+        $filterQuery = Startup::query();
+        
+        if (isset($validated['municipality_code'])) {
+            // Municipality level - most specific
+            $filterLevel = 'municipality';
+            $filterQuery->where('municipality_code', $validated['municipality_code']);
+        } elseif (isset($validated['province_code'])) {
+            // Province level
+            $filterLevel = 'province';
+            $filterQuery->where('province_code', $validated['province_code']);
+        } elseif (isset($validated['region_code'])) {
+            // Region level
+            $filterLevel = 'region';
+            $filterQuery->where('region_code', $validated['region_code']);
+        }
+
+        // If any filter is applied, return the startups
+        if ($filterLevel) {
+            // Apply sector filter if provided
+            if (isset($validated['sector'])) {
+                $filterQuery->where(function($q) use ($validated) {
+                    $q->where('sectors', 'like', '%"' . $validated['sector'] . '"%')
+                      ->orWhere('sectors', 'like', '%' . $validated['sector'] . '%');
+                });
+            }
+
+            $startups = $filterQuery->with(['region', 'province', 'municipality'])
+                ->orderBy('name', 'asc')
+                ->limit($validated['per_page'] ?? 100)
+                ->get()
+                ->map(function ($startup) {
+                    // Parse sectors if it's a JSON string
+                    $sectors = $startup->sectors;
+                    if (is_string($sectors)) {
+                        $sectors = json_decode($sectors, true) ?? [];
+                    }
+                    
+                    return [
+                        'id' => $startup->id,
+                        'startup_number' => $startup->startup_number,
+                        'name' => $startup->name,
+                        'logo_url' => $startup->logo_url,
+                        'sectors' => is_array($sectors) ? $sectors : [],
+                        'status' => $startup->status,
+                        'development_phase' => $startup->development_phase,
+                        'business_classification' => $startup->business_classification,
+                        'region_name' => $startup->region->name ?? 'N/A',
+                        'province_name' => $startup->province->name ?? 'N/A',
+                        'municipality_name' => $startup->municipality->name ?? 'N/A',
+                        'address_label' => $startup->address_label,
+                        'founding_year' => $startup->founding_year,
+                        'founder_name' => $startup->founder_name,
+                    ];
+                });
+
+            $response['statistics']['startups'] = $startups;
+            $response['statistics']['startups_count'] = $startups->count();
+            $response['statistics']['filter_level'] = $filterLevel;
+        }
+
+        return response()->json($response);
     }
 
     /**

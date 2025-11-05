@@ -1,7 +1,7 @@
 import HeatMap from './HeatMap';
 import Overview from './Overview';
 import LatestStartup from './LatestStartup';
-import ComprehensiveStatistics from './ComprehensiveStatistics';
+import AdvancedAnalytics from './AdvancedAnalytics';
 import { ExpiringPermitsCard } from './ExpiringPermitsCard';
 import { ExportButtons } from './ExportButtons';
 import { useCallback, useState } from 'react';
@@ -26,8 +26,8 @@ function Dashboard() {
         </div>
       )}
       
-      <ComprehensiveStatistics />
-      {/* <ExpiringPermitsCard /> */}
+      <AdvancedAnalytics />
+      <ExpiringPermitsCard />
       <HeatMap />
       <Acl code={['startups-view']}>
         <LatestStartup />

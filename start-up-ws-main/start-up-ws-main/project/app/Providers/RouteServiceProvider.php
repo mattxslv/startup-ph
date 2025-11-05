@@ -27,6 +27,10 @@ class RouteServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            // Public API routes (no Sanctum stateful middleware)
+            Route::prefix('api')
+                ->group(base_path('routes/public-api.php'));
+
             Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\User\AuthenticationController;
 use App\Http\Controllers\User\EGovSSOAuthController;
 use App\Http\Controllers\User\PasswordController;
@@ -11,9 +10,6 @@ use App\Http\Controllers\User\StartupController;
 use App\Http\Controllers\User\StartupProgramController;
 use App\Http\Controllers\User\StartupRequirementController;
 use Illuminate\Support\Facades\Route;
-
-// Chatbot endpoint (public - no throttling, no auth required)
-Route::post('user/chatbot', [ChatbotController::class, 'chat']);
 
 Route::prefix('user')->middleware('throttle:api')->group(function () {
     Route::middleware('throttle:authenticate')->group(function () {

@@ -46,6 +46,7 @@
     "react-select": "^5.8.0",
     "react-sortablejs": "^6.1.4",
     "tailwind-merge": "^2.3.0",
+    "topojson-client": "^3.1.0",
     "uuid": "^9.0.0",
     "yup": "^1.0.0"
   },
@@ -60,6 +61,7 @@
     "@types/react-datepicker": "^4.8.0",
     "@types/react-dom": "^18.0.10",
     "@types/react-input-mask": "^3.0.2",
+    "@types/topojson-client": "^3.1.5",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",

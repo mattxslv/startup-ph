@@ -24,10 +24,12 @@ const useComprehensiveStatistics = (filters?: any) => {
   return useQuery({
     queryKey: ['COMPREHENSIVE_STATISTICS', filters],
     queryFn: async () => {
+      console.log('🌐 Calling API with filters:', filters);
       const response = await ws.get<DashboardStatistics>({
-        url: '/administrator/dashboard/comprehensive-statistics',
+        url: '/api/v2/administrator/dashboard/comprehensive-statistics',
         params: filters,
       });
+      console.log('✅ API Response:', response);
       return response;
     },
   });
