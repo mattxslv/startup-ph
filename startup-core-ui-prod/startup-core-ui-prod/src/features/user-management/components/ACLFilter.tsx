@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import { FilterAction, FilterWrapper, Form, Input, InputSelect } from 'ui/forms';
+import { FilterAction, FilterWrapper, Form, Input } from 'ui/forms';
 import useDebounceEffect from 'hooks/useDebounceEffect';
 
 export interface IFilter {
@@ -67,21 +67,31 @@ function ACLFilter({
       />
       
       <div className="flex gap-3">
-        <InputSelect
+        <select
           name="user_type"
           value={filter.user_type || ''}
           onChange={(e) => setFilter({ ...filter, user_type: e.target.value, page: 1 })}
-          options={USER_TYPE_OPTIONS}
-          className="flex-1"
-        />
+          className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          {USER_TYPE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
         
-        <InputSelect
+        <select
           name="is_test_account"
           value={filter.is_test_account || ''}
           onChange={(e) => setFilter({ ...filter, is_test_account: e.target.value, page: 1 })}
-          options={TEST_ACCOUNT_OPTIONS}
-          className="flex-1"
-        />
+          className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          {TEST_ACCOUNT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );
