@@ -28,6 +28,11 @@ class ChatbotController extends Controller
             // Build conversation context
             $messages = $this->buildConversation($conversationHistory, $userMessage);
             
+            Log::info('Chatbot request', [
+                'message' => $userMessage,
+                'api_key_set' => !empty(config('services.gemini.api_key')),
+            ]);
+            
             // Call Gemini API
             $response = $this->callGeminiAPI($messages);
             
@@ -36,11 +41,14 @@ class ChatbotController extends Controller
                 'message' => $response,
             ]);
         } catch (\Exception $e) {
-            Log::error('Chatbot error: ' . $e->getMessage());
+            Log::error('Chatbot error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
             
             return response()->json([
                 'success' => false,
                 'message' => 'I apologize, but I\'m having trouble responding right now. Please try again or contact our support team.',
+                'error' => app()->environment('local') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -150,7 +158,7 @@ Now assist the user with their questions:";
         }
 
         $response = Http::timeout(30)->post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' . $apiKey,
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=' . $apiKey,
             [
                 'contents' => [
                     [
