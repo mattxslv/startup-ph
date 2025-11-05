@@ -42,7 +42,7 @@ export default function ChatbotWidget() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/v2/user/chatbot', {
+      const response = await fetch('http://localhost:8080/api/v2/user/chatbot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,8 +94,55 @@ export default function ChatbotWidget() {
     'What is a startup enabler?',
   ];
 
-  const handleQuickQuestion = (question: string) => {
-    setInputMessage(question);
+  const handleQuickQuestion = async (question: string) => {
+    if (isLoading) return;
+
+    const userMessage: Message = {
+      role: 'user',
+      content: question,
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v2/user/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: question,
+          conversation_history: messages.map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+          })),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const assistantMessage: Message = {
+          role: 'assistant',
+          content: data.message,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      } else {
+        throw new Error('Failed to get response');
+      }
+    } catch (error) {
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again or contact support.',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
