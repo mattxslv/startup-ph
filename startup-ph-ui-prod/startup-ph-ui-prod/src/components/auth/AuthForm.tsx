@@ -30,7 +30,7 @@ interface IAuthForm {
   email: string;
   password: string;
   password_confirmation: string;
-  user_type?: 'visitor' | 'startup';
+  user_type?: 'visitor' | 'startup' | 'enabler';
 }
 
 const getInitForm = (): IAuthForm => ({
@@ -209,6 +209,15 @@ function AuthForm() {
                 <input
                   type='radio'
                   name='user_type'
+                  value='enabler'
+                  className='form-radio text-primary focus:ring-primary'
+                />
+                <span className='text-sm'>Enabler</span>
+              </label>
+              <label className='flex items-center gap-2 cursor-pointer'>
+                <input
+                  type='radio'
+                  name='user_type'
                   value='visitor'
                   className='form-radio text-primary focus:ring-primary'
                 />
@@ -216,7 +225,7 @@ function AuthForm() {
               </label>
             </div>
             <p className='text-xs text-muted'>
-              Select 'Startup' if you're registering a business, or 'Visitor' if you're just browsing.
+              Select 'Startup' if you're registering a business, 'Enabler' if you support startups, or 'Visitor' if you're just browsing.
             </p>
           </div>
           <div className=' flex flex-col gap-2'>

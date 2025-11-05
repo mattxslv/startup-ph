@@ -1,13 +1,12 @@
 import { ws } from '@/lib';
 import { useMutation } from '@tanstack/react-query';
 
-export interface IRegisterForm {
+export interface IRegisterForm extends Record<string, string> {
   email: string;
+  otp_code: string;
   password: string;
   password_confirmation: string;
-  pin: string;
-  user_type?: 'visitor' | 'startup';
-  captcha?: string | null;
+  user_type: 'visitor' | 'startup' | 'enabler';
 }
 
 export const useRegister = () => {

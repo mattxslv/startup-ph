@@ -5,33 +5,17 @@ import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 
 export interface IProfile {
-  id: string;
-  birth_date: string;
-  birth_place: string;
-  citizenship: string;
-  display_name: string;
-  email: string;
-  email_verified_at: string;
-  first_name: string;
-  gender: string;
-  identification_no?: string;
-  identification_type?: string;
-  identification_url?: string;
-  interests: string[];
-  last_name: string;
-  middle_name: string;
-  mobile_no: string;
-  mobile_no_verified_at: string;
-  photo_url: string;
-  registered_at: string;
-  social_classification: string;
-  suffix_name: string;
-  last_login_at: string;
-  user_type?: 'visitor' | 'startup';
-  _is_profile_completed?: boolean;
-  _is_profile_from_sso?: boolean;
-  _is_email_verified: boolean;
-  _is_mobile_verified: boolean;
+  id?: number;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  suffix_name?: string;
+  email?: string;
+  contact_number?: string;
+  sex?: string;
+  birth_date?: string;
+  photo_url?: string;
+  user_type?: 'visitor' | 'startup' | 'enabler';
 }
 
 export const GENDER_OPTIONS = [
