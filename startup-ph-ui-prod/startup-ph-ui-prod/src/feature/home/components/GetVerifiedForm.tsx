@@ -30,11 +30,21 @@ const handleConsent = (e: any) => {
 const validationSchema = yup.object().shape({
   tin: yup.string().required('Required'),
   registration_no: yup.string().required('Required'),
+  dti_permit_number: yup.string().when('sec_permit_number', {
+    is: (val: string) => !val || val.length === 0,
+    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
+    otherwise: (schema) => schema.nullable(),
+  }),
+  sec_permit_number: yup.string().when('dti_permit_number', {
+    is: (val: string) => !val || val.length === 0,
+    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
+    otherwise: (schema) => schema.nullable(),
+  }),
   business_classification: yup.string().required('Required'),
   development_phase: yup.string().required('Required'),
   proof_of_registration_url: yup.string().required('Required'),
   is_oath_accepted: yup.boolean().oneOf([true], 'You must accept the Oath of Undertaking and Consent'),
-});
+}, [['dti_permit_number', 'sec_permit_number']]);
 
 export const GetVerifiedFields = () => {
   return (
@@ -48,11 +58,27 @@ export const GetVerifiedFields = () => {
       />
       <Input
         name='registration_no'
-        label='DTI/SEC Registration Number'
-        placeholder='Enter DTI or SEC number'
-        note='Please enter your DTI Registration Number or SEC Number. Ensure this matches your proof of registration document.'
+        label='Business Registration Number'
+        placeholder='Enter your business registration number'
+        note='Your official business registration number from DTI or SEC'
         required
       />
+      
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <Input
+          name='dti_permit_number'
+          label='DTI Permit Number'
+          placeholder='Enter DTI number (if applicable)'
+          note='Enter either DTI or SEC number (at least one is required)'
+        />
+        <Input
+          name='sec_permit_number'
+          label='SEC Permit Number'
+          placeholder='Enter SEC number (if applicable)'
+          note='Enter either DTI or SEC number (at least one is required)'
+        />
+      </div>
+      
       <InputDatasetSelect
         code='business-classification'
         name='business_classification'
@@ -207,6 +233,8 @@ function GetVerifiedForm({ onClose }: Props) {
     // Required fields for verification
     tin: data?.tin || '',
     registration_no: data?.registration_no || '',
+    dti_permit_number: data?.dti_permit_number || '',
+    sec_permit_number: data?.sec_permit_number || '',
     business_classification: data?.business_classification || '',
     development_phase: data?.development_phase || '',
     proof_of_registration_url: data?.proof_of_registration_url || '',
