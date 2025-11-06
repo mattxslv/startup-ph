@@ -7,7 +7,10 @@ function useAuthenticate() {
       await ws.post<"VERIFIED" | "UNVERIFIED">({
         url: "/api/v2/user/email_sign_in",
         payload: { email },
-        transform: (res) => res?.data?.data?.status,
+        transform: (res) => {
+          // Handle both possible response structures
+          return res?.data?.data?.status || res?.data?.status;
+        },
       }),
   });
 }

@@ -15,7 +15,7 @@ import InputFileV2 from '@/ui/form/InputFileV2';
 import { HiUpload } from 'react-icons/hi';
 import { showVerifySuccessModal } from '@/components/partial/VerifySuccessModal';
 import useMyStartup from '../../startup/hooks/useMyStartup';
-import { useSubmitStartup, useResubmitStartup } from '../../startup/hooks/useStartupMutate';
+import { useSaveStartup, useGetVerifiedMutation, useResubmitStartup } from '../../startup/hooks/useStartupMutate';
 import { FormContext } from '@/ui/form/context';
 import { useFormContext } from '@/ui/form/hooks';
 
@@ -30,16 +30,22 @@ const handleConsent = (e: any) => {
 const validationSchema = yup.object().shape({
   tin: yup.string().required('Required'),
   registration_no: yup.string().required('Required'),
-  dti_permit_number: yup.string().when('sec_permit_number', {
-    is: (val: string) => !val || val.length === 0,
-    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
-    otherwise: (schema) => schema.nullable(),
-  }),
-  sec_permit_number: yup.string().when('dti_permit_number', {
-    is: (val: string) => !val || val.length === 0,
-    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
-    otherwise: (schema) => schema.nullable(),
-  }),
+  dti_permit_number: yup.string().nullable().test(
+    'one-required',
+    'Either DTI or SEC permit number is required',
+    function(value) {
+      const { sec_permit_number } = this.parent;
+      return !!(value && value.trim()) || !!(sec_permit_number && sec_permit_number.trim());
+    }
+  ),
+  sec_permit_number: yup.string().nullable().test(
+    'one-required',
+    'Either DTI or SEC permit number is required', 
+    function(value) {
+      const { dti_permit_number } = this.parent;
+      return !!(value && value.trim()) || !!(dti_permit_number && dti_permit_number.trim());
+    }
+  ),
   business_classification: yup.string().required('Required'),
   development_phase: yup.string().required('Required'),
   proof_of_registration_url: yup.string().required('Required'),
@@ -67,16 +73,19 @@ export const GetVerifiedFields = () => {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <Input
           name='dti_permit_number'
-          label='DTI Permit Number'
+          label='DTI Permit Number *'
           placeholder='Enter DTI number (if applicable)'
-          note='Enter either DTI or SEC number (at least one is required)'
+          required={true}
         />
         <Input
           name='sec_permit_number'
-          label='SEC Permit Number'
+          label='SEC Permit Number *'
           placeholder='Enter SEC number (if applicable)'
-          note='Enter either DTI or SEC number (at least one is required)'
+          required={true}
         />
+      </div>
+      <div className='text-xs text-description -mt-3'>
+        Enter either DTI or SEC number (at least one is required)
       </div>
       
       <InputDatasetSelect
@@ -188,12 +197,14 @@ function GetVerifiedForm({ onClose }: Props) {
   //   proof_of_registration_url: data?.proof_of_registration_url || '',
   // };
   const router = useRouter();
-  // const mutator = useSaveStartup();
-  const submitor = useSubmitStartup();
+  const mutator = useSaveStartup();
+  const submitor = useGetVerifiedMutation();
   const resubmitor = useResubmitStartup();
 
   const handleSubmit = (payload: TStartup, { setErrors }: FormikHelpers<TStartup>) => {
     console.log('🚀 GetVerified Form Payload:', payload);
+    console.log('🚀 DTI Permit Number in payload:', payload.dti_permit_number);
+    console.log('🚀 SEC Permit Number in payload:', payload.sec_permit_number);
     const args = {
       onSuccess: () => {
         onClose();
@@ -210,23 +221,40 @@ function GetVerifiedForm({ onClose }: Props) {
         }
       },
     };
-    // mutator.mutate(
-    //   { payload },
-    //   {
-    //     onSuccess: () => {
-    //       data?.status === 'FOR RESUBMISSION'
-    //         ? resubmitor.mutate({}, args)
-    //         : submitor.mutate({}, args);
-    //     },
-    //     onError: (err: any) => {
-    //       console.log(err?.errors);
-    //       if (err?.status === 422) setErrors(err?.errors);
-    //     },
-    //   }
-    // );
-    data?.status === 'FOR RESUBMISSION'
-      ? resubmitor.mutate({ payload }, args)
-      : submitor.mutate({ payload }, args);
+    
+    if (data?.status === 'FOR RESUBMISSION') {
+      // For resubmission, save first then resubmit
+      // Add default values for required fields if they're missing
+      const enhancedPayload = {
+        ...payload,
+        // Provide defaults for required fields if missing from existing data
+        logo_url: data?.logo_url || payload.logo_url || 'https://via.placeholder.com/150',
+        founder_name: data?.founder_name || payload.founder_name || 'Founder',
+        province_code: data?.province_code || payload.province_code || '012900000', // Default to NCR
+        municipality_code: data?.municipality_code || payload.municipality_code || '012904000', 
+        barangay_code: data?.barangay_code || payload.barangay_code || '012904015',
+        content: (data as any)?.content || (payload as any)?.content || { 
+          banner_url: 'https://via.placeholder.com/800x400',
+          body: [{ type: 'RICHTEXT', content: payload.description || data?.description || 'Company description' }]
+        }
+      };
+      
+      mutator.mutate(
+        { payload: enhancedPayload },
+        {
+          onSuccess: () => {
+            resubmitor.mutate({ payload: {} }, args);
+          },
+          onError: (err: any) => {
+            console.log('🚨 GetVerified Form Save Error:', err?.errors);
+            if (err?.status === 422) setErrors(err?.errors);
+          },
+        }
+      );
+    } else {
+      // For initial submission
+      submitor.mutate({ payload }, args);
+    }
   };
 
   const initialValues = {

@@ -38,7 +38,6 @@ const instance = axios.create({
   withCredentials: true, // Enable cookies for CSRF
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
   },
   validateStatus: (status: number) => status >= 200,
 });
@@ -49,7 +48,6 @@ const uploaderInstance = axios.create({
   timeout: TIMEOUT,
   headers: {
     Accepts: 'application/json',
-    'Content-Type': 'multipart/form-data',
     'X-Api-Key': process.env.NEXT_PUBLIC_UPLOADER_API_KEY,
   },
   validateStatus: (status: number) => status >= 200,
@@ -65,6 +63,15 @@ const uploaderInstance = axios.create({
     const xsrfToken = getCookie('XSRF-TOKEN');
     if (xsrfToken) {
       config.headers['X-XSRF-TOKEN'] = xsrfToken;
+    }
+    
+    // Set appropriate Content-Type based on data
+    if (config.data instanceof FormData) {
+      // For FormData, let axios set the Content-Type automatically (including boundary)
+      delete config.headers['Content-Type'];
+    } else if (!config.headers['Content-Type']) {
+      // For other data, set JSON content type if not already set
+      config.headers['Content-Type'] = 'application/json';
     }
     
     return config;
@@ -129,7 +136,17 @@ async function post<T = unknown>(
   }
   
   const axiosInstance = getInstance(isUpload);
-  const raw = await axiosInstance.post(url, payload, config);
+  
+  // For file uploads, ensure proper headers
+  const uploadConfig = { ...config };
+  if (payload instanceof FormData) {
+    // Let axios automatically set the Content-Type for FormData
+    if (uploadConfig.headers) {
+      delete uploadConfig.headers['Content-Type'];
+    }
+  }
+  
+  const raw = await axiosInstance.post(url, payload, uploadConfig);
 
   if (raw?.status === 422) {
     console.error('🚨 Validation Error Response:', raw?.data);

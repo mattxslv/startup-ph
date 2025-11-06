@@ -35,16 +35,33 @@ class UserAuthenticationService
      * Email sign in
      *
      * @param string $email
-     * @return void
+     * @return string
      */
     public function emailSignIn(string $email)
     {
-        if ($user = User::getByEmail($email)) {
-            Mail::to($user)->send(new EmailRegistrationAttemptMail($user));
-        }
+        try {
+            if ($user = User::getByEmail($email)) {
+                // Try to send email, but don't fail if it doesn't work
+                try {
+                    Mail::to($user)->send(new EmailRegistrationAttemptMail($user));
+                } catch (\Exception $mailException) {
+                    \Log::warning('Failed to send registration attempt email', [
+                        'email' => $email,
+                        'error' => $mailException->getMessage()
+                    ]);
+                }
+                return 'VERIFIED'; // Indicates user already exists
+            }
 
-        if (!$user) {
             (new OTPService(OTPEnum::REGISTRATION))->sendEmail(new User(['email' => $email]), EmailVerificationMail::class);
+            return 'UNVERIFIED'; // Indicates new user, OTP sent
+        } catch (\Exception $e) {
+            \Log::error('EmailSignIn error', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 

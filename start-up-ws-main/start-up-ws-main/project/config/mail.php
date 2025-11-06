@@ -15,7 +15,7 @@ return [
 
     'default' => env('MAIL_MAILER', 'smtp'),
 
-    'support_email' => env('SUPPORT_EMAIL', 'support@example.com'),
+    'support_email' => env('SUPPORT_EMAIL', 'startup.support@dict.gov.ph'),
 
     /*
     |--------------------------------------------------------------------------

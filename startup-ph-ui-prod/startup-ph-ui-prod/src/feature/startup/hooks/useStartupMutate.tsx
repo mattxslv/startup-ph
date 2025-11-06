@@ -5,10 +5,35 @@ import _ from 'lodash';
 import { TStartup } from '../types';
 
 const payloadProject = (raw: Partial<TStartup>) => {
+  // Preserve DTI and SEC permit numbers before filtering
+  const dtiPermit = (raw as any).dti_permit_number;
+  const secPermit = (raw as any).sec_permit_number;
+  
   const filteredRaw: Partial<TStartup> = removeEmptyValues(raw);
   const newRaw = { ...filteredRaw };
   delete newRaw['banner_url'];
   delete newRaw['body'];
+  
+  // Always preserve DTI and SEC permit numbers
+  // Only include fields if they have actual values (not empty strings)
+  // This prevents Laravel validation issues with empty required_without fields
+  if (dtiPermit !== undefined) {
+    if (dtiPermit && dtiPermit.trim() !== '') {
+      (newRaw as any).dti_permit_number = dtiPermit;
+    } else {
+      // Send undefined instead of empty string for better Laravel validation
+      (newRaw as any).dti_permit_number = undefined;
+    }
+  }
+  if (secPermit !== undefined) {
+    if (secPermit && secPermit.trim() !== '') {
+      (newRaw as any).sec_permit_number = secPermit;
+    } else {
+      // Send undefined instead of empty string for better Laravel validation
+      (newRaw as any).sec_permit_number = undefined;
+    }
+  }
+  
   const content = {
     ...(raw.banner_url && { banner_url: raw.banner_url }),
     ...(raw.body && !_.isEmpty(raw.body) && { body: raw.body }),
@@ -21,12 +46,20 @@ export const useSaveStartup = () => {
     mutationFn: async ({ payload }: { payload: Partial<TStartup> }) => {
       const processedPayload = payloadProject(payload);
       console.log('🚀 Original payload:', payload);
+      console.log('🚀 DTI Permit in original:', (payload as any).dti_permit_number);
+      console.log('🚀 SEC Permit in original:', (payload as any).sec_permit_number);
       console.log('🚀 Processed payload:', processedPayload);
-      return await ws.post({
+      console.log('🚀 DTI Permit in processed:', (processedPayload as any).dti_permit_number);
+      console.log('🚀 SEC Permit in processed:', (processedPayload as any).sec_permit_number);
+      console.log('🚀 Final payload being sent to /api/v2/user/startup:', JSON.stringify(processedPayload, null, 2));
+      
+      const response = await ws.post({
         url: '/api/v2/user/startup',
         payload: processedPayload,
-        // payload,
       });
+      
+      console.log('🚀 Backend response:', response);
+      return response;
     },
     onSuccess: () => {
       setTimeout(() => {
@@ -36,18 +69,19 @@ export const useSaveStartup = () => {
   });
 };
 
-export const useSubmitStartup = () => {
+export const useGetVerifiedMutation = () => {
   return useMutation({
     mutationFn: async ({ payload }: { payload: Partial<TStartup> }) => {
-      const anyPayload = payload as any;
       const processedPayload = { 
         ...payloadProject(payload), 
         is_oath_accepted: 1,
-        // Map registration_no to dti_permit_number if not already provided
-        dti_permit_number: anyPayload.dti_permit_number || anyPayload.registration_no || '',
       };
       console.log('🚀 Original payload:', payload);
+      console.log('🚀 DTI Permit in original:', (payload as any).dti_permit_number);
+      console.log('🚀 SEC Permit in original:', (payload as any).sec_permit_number);
       console.log('🚀 Processed payload:', processedPayload);
+      console.log('🚀 DTI Permit in processed:', (processedPayload as any).dti_permit_number);
+      console.log('🚀 SEC Permit in processed:', (processedPayload as any).sec_permit_number);
       console.log('🚀 Processed payload keys:', Object.keys(processedPayload));
       console.log('🚀 Processed payload JSON:', JSON.stringify(processedPayload, null, 2));
       return await ws.post({
@@ -55,9 +89,15 @@ export const useSubmitStartup = () => {
         payload: processedPayload,
       });
     },
-    onSuccess: () => {
+    onSuccess: (response: any, variables) => {
+      // Use the response data if available, otherwise use the submitted payload
+      const updatedData = response?.data || variables.payload;
+      
       queryClient.setQueryData(['MY_STARTUP'], (prev: any) => {
-        return { ...prev, status: 'VERIFIED' };
+        return { 
+          ...prev, 
+          ...updatedData,
+        };
       });
       setTimeout(() => {
         queryClient.invalidateQueries(['MY_STARTUP']);

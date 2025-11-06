@@ -6,6 +6,7 @@ use App\Models\Startups\Enums\StartupEnum;
 use App\Models\Startups\Startup;
 use App\Models\Users\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class DraftStartupRequest extends FormRequest
@@ -27,7 +28,23 @@ class DraftStartupRequest extends FormRequest
             // 'slug' => ['required', 'max:100', Rule::unique('startups', 'slug')->ignore(User::authenticated()->startup)],
             // 'address_label' => ['nullable', 'max:255'],
             // 'address_geoloc' => ['required', 'max:100'],
-            'region_code' => ['required', Rule::exists('regions', 'code')],
+            'region_code' => ['required', function($attribute, $value, $fail) {
+                // Check if it's a valid 2-digit code (legacy format)
+                if (preg_match('/^\d{2}$/', $value)) {
+                    $fullCode = $value . '0000000';
+                    if (!\DB::table('regions')->where('code', $fullCode)->exists()) {
+                        $fail('The selected region code is invalid.');
+                    }
+                } 
+                // Check if it's a valid 9-digit code (new format)
+                elseif (preg_match('/^\d{9}$/', $value)) {
+                    if (!\DB::table('regions')->where('code', $value)->exists()) {
+                        $fail('The selected region code is invalid.');
+                    }
+                } else {
+                    $fail('The selected region code is invalid.');
+                }
+            }],
             'province_code' => ['required', Rule::exists('provinces', 'code')],
             'municipality_code' => ['required', Rule::exists('municipalities', 'code')],
             'barangay_code' => ['required', Rule::exists('barangays', 'code')],

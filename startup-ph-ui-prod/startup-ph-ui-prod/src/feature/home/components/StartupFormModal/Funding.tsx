@@ -192,7 +192,7 @@ const FundingForm = ({ onClose, mutator }: IProps & { mutator: any }) => {
                     value={funding.document_urls}
                     error={fundingErrors?.[index]?.['document_urls']}
                     onFileRemove={(urlIndex) => handleFileRemove(index, urlIndex)}
-                    endpoint={`/ext/${process.env.NEXT_PUBLIC_UPLOADER_PROJECT}/upload`}
+                    endpoint="/api/v2/upload"
                   />
                 </div>
               </div>

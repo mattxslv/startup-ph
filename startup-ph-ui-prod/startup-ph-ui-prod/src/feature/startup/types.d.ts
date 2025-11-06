@@ -41,6 +41,12 @@ type TStartup = {
   proof_of_registration_url: string;
 
   status?: 'UNVERIFIED' | 'FOR VERIFICATION' | 'VERIFIED' | 'REJECTED' | 'FOR RESUBMISSION';
+  
+  // status timestamps
+  verified_at?: string;
+  submitted_at?: string;
+  returned_at?: string;
+  rejected_at?: string;
 
   // content start
   banner_url?: string;

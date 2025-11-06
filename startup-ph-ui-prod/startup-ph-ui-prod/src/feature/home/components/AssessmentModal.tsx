@@ -5,7 +5,7 @@ import { showModal } from '@/components/modal';
 import { HiInformationCircle } from 'react-icons/hi';
 import Link from 'next/link';
 
-export const showAssessmentModal = (assessmentTags: TAssessmentTags[], remarks?: string) => {
+export const showAssessmentModal = (assessmentTags?: TAssessmentTags[] | null, remarks?: string | null) => {
   showModal({
     id: 'assessment-modal',
     title: 'Flagged Application for correction',
@@ -20,17 +20,17 @@ export const showAssessmentModal = (assessmentTags: TAssessmentTags[], remarks?:
 };
 
 interface Props {
-  assessmentTags: TAssessmentTags[];
-  remarks: string;
+  assessmentTags: TAssessmentTags[] | null | undefined;
+  remarks: string | null | undefined;
   onClose: () => void;
 }
 
 function AssessmentModal({ assessmentTags, remarks, onClose }: Props) {
   return (
     <div className='space-y-4 px-5'>
-      {assessmentTags.length || remarks ? (
+      {(assessmentTags && assessmentTags.length) || remarks ? (
         <ul className='list-disc list-outside text-sm'>
-          {assessmentTags.length
+          {assessmentTags && assessmentTags.length
             ? assessmentTags.map(({ description, code, meta }) => (
                 <li key={code}>
                   <p>

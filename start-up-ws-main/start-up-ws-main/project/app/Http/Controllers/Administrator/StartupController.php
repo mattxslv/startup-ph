@@ -87,6 +87,20 @@ class StartupController extends Controller
     }
 
     /**
+     * Reject startup
+     *
+     * @param ReturnStartupRequest $request
+     * @param Startup $startup
+     * @return StartupResources
+     */
+    public function reject(ReturnStartupRequest $request, Startup $startup)
+    {
+        $startup->reject($request->validated());
+
+        return new StartupResources($startup);
+    }
+
+    /**
      * Flag startup
      *
      * @param Startup $startup

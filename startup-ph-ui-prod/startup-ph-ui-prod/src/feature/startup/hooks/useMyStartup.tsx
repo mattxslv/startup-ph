@@ -29,6 +29,12 @@ const transform = (raw: any): TStartup => ({
   tin: raw.tin || '',
   short_description: raw?.short_description || '',
   status: raw?.status,
+  
+  // status timestamps
+  verified_at: raw?.verified_at,
+  submitted_at: raw?.submitted_at,
+  returned_at: raw?.returned_at,
+  rejected_at: raw?.rejected_at,
 
   // content
   banner_url: raw?.content?.banner_url || '',

@@ -62,8 +62,8 @@ const transformGenderValue = (gender: string | null): 'Male' | 'Female' | 'Prefe
   }
 };
 
-interface IForm extends TStartup, IProfile {}
-export default function Summary({ setErrors }: FormikHelpers<IForm>) {
+interface IForm extends TStartup, Omit<IProfile, 'id'> {}
+export default function Summary({ setErrors }: { setErrors?: FormikHelpers<IForm>['setErrors'] }) {
   useProfile();
   const { isLoading, data } = useDatasetOptions('sector');
   const router = useRouter();
@@ -71,6 +71,8 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
   const mutator2 = useSaveStartup();
 
   const handleSubmit = async () => {
+    const userEmail = sessionStorage.getItem('email') || '';
+    
     const profileData: Partial<IProfile> = {
       first_name: sessionStorage.getItem('first_name')?.toUpperCase() || '',
       middle_name: sessionStorage.getItem('middle_name')?.toUpperCase() || '',
@@ -118,18 +120,29 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
             { payload: startupData },
             {
               onSuccess: (data: any) => {
+                // Get startup ID from response
+                const startupId = data?.data?.data?.id || data?.data?.id || data?.id;
+                
                 sessionStorage.clear();
-                router.push('/dashboard');
                 Toast.success(
                   'Congratulations! Your account has been successfully created. Welcome to StartUp PH!'
                 );
+                
+                // Immediate navigation using window.location to prevent hot reload interference
+                if (startupId) {
+                  window.location.href = `/startups/${startupId}`;
+                } else {
+                  window.location.href = '/dashboard';
+                }
               },
               onError: (err: any) => {
                 if (err?.status === 422) {
                   Toast.error(err?.message);
-                  setErrors(err?.errors);
+                  setErrors && setErrors(err?.errors);
                   return;
                 }
+                // Even on error, try to navigate to dashboard
+                window.location.href = '/dashboard';
               },
             }
           );
@@ -137,9 +150,11 @@ export default function Summary({ setErrors }: FormikHelpers<IForm>) {
         onError: (err: any) => {
           if (err?.status === 422) {
             Toast.error(err?.message);
-            setErrors(err?.errors);
+            setErrors && setErrors(err?.errors);
             return;
           }
+          // Even on error, try to navigate to dashboard
+          window.location.href = '/dashboard';
         },
       }
     );

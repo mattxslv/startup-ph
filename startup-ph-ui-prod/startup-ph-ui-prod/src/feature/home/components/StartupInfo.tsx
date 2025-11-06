@@ -9,7 +9,6 @@ import Title from '@/components/home/Title';
 import Button from '@/ui/button/Button';
 import Banner from './Banner';
 // import LogoContainer from './LogoContainer';
-import StartupBadgeAction from './StartupBadgeIcon';
 import { showVerifyModal } from './verify';
 import Image from 'next/image';
 import { StartupFormModal } from './StartupFormModal';
@@ -48,11 +47,35 @@ export const BasicInfo = ({ data, canEdit }: BasicInfoProps) => (
     </div>
     <div className='flex flex-col grow'>
       <div className='flex gap-5 items-center mb-2'>
-        <div className='text-base font-bold text-dark flex flex-col md:flex-row gap-2'>
-          <p className='text-xl lg:text-2xl font-bold text-gray-900'>{data.name}</p>
-
-          <StartupBadgeAction data={data} />
-
+        <div className='text-base font-bold text-dark'>
+          <div className='flex items-center gap-3 mb-2'>
+            <p className='text-xl lg:text-2xl font-bold text-gray-900'>{data.name}</p>
+            {data.status === 'VERIFIED' && (
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200'>
+                ✓ Verified
+              </span>
+            )}
+            {data.status === 'REJECTED' && (
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200'>
+                ✗ Rejected
+              </span>
+            )}
+            {data.status === 'FOR RESUBMISSION' && (
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200'>
+                ↻ For Resubmission
+              </span>
+            )}
+            {data.status === 'FOR VERIFICATION' && (
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800 border border-yellow-200'>
+                ⏳ For Verification
+              </span>
+            )}
+          </div>
+          
+          {(data.status === 'REJECTED' || data.status === 'FOR RESUBMISSION') && (
+            <p className='text-xs text-gray-500 mb-2'>Check your registered email for details</p>
+          )}
+          
           {data.status === 'FOR RESUBMISSION' && (
             <Button
               size='xs'
@@ -162,7 +185,17 @@ interface BusinessInfoProps {
   canEdit: boolean;
 }
 
-export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
+export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => {
+  // Debug log to see what permit data is available
+  console.log('🏢 BusinessInfo data:', {
+    permit_number: data.permit_number,
+    registration_no: data.registration_no,
+    dti_permit_number: data.dti_permit_number,
+    sec_permit_number: data.sec_permit_number,
+    business_certificate_expiration_date: data.business_certificate_expiration_date
+  });
+
+  return (
   <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
     <div className='flex flex-col mb-5'>
       <div className='flex items-center justify-between gap-4'>
@@ -200,7 +233,7 @@ export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
         {data.tin || '-'}
       </Info>
       <Info icon='/images/icons/icon-10.png' label='Registration/Certification Permit Number'>
-        {data.registration_no || '-'}
+        {data.permit_number || data.registration_no || data.dti_permit_number || data.sec_permit_number || '-'}
       </Info>
       <Info icon='/images/icons/icon-11.png' label='Business Expiration Year'>
         {data.business_certificate_expiration_date || '-'}
@@ -220,15 +253,22 @@ export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
       </Info>
     </div>
   </div>
-);
+);};
 
 interface FundingInfoProps {
   data: TStartup;
   canEdit: boolean;
 }
 
-export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
-  <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
+export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => {
+  // Debug log to see funding data
+  console.log('💰 FundingInfo data:', {
+    fundings: data.fundings,
+    has_funding: data.has_funding
+  });
+
+  return (
+    <div className='bg-gradient-to-br from-gray-50 to-white p-6 rounded-lg border border-gray-200'>
     <div className='flex flex-col mb-5'>
       <div className='flex items-center justify-between gap-4'>
         <p className='text-xl font-bold text-gray-900'>Funding Information</p>
@@ -255,12 +295,16 @@ export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
       {!isEmpty(data.fundings) ? (
         data.fundings.map((funding, index) => (
           <Info icon='' label={`Funding Agency ${index + 1}`} key={funding.agency}>
-            {funding.document_urls.map((url) => (
-              <div className='flex items-center gap-3' key={url}>
+            {funding.document_urls.map((url, urlIndex) => (
+              <div className='flex items-center gap-3' key={`${url}-${urlIndex}`}>
                 {funding.agency}
-                <Link target='_blank' href={url} className='text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium transition-colors'>
-                  View Attachment <HiEye />
-                </Link>
+                {url && url.trim() && (url.startsWith('http://') || url.startsWith('https://')) ? (
+                  <Link target='_blank' href={url} className='text-blue-600 hover:text-blue-800 flex items-center gap-1 font-medium transition-colors'>
+                    View Attachment <HiEye />
+                  </Link>
+                ) : (
+                  <span className='text-gray-500 text-sm'>No valid attachment URL</span>
+                )}
               </div>
             ))}
           </Info>
@@ -270,7 +314,7 @@ export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
       )}
     </div>
   </div>
-);
+);};
 
 interface SocialMediaInfoProps {
   data: TStartup;
@@ -332,6 +376,7 @@ const StartupInfo = ({
 }: Props) => {
   const renderSection = (section: string) => {
     switch (section) {
+
       case 'basic':
         return (
           <>
@@ -342,6 +387,7 @@ const StartupInfo = ({
                 isVerifiable={isVerifiable}
                 hasFunding={data.has_funding}
                 hasExpiration={Boolean(data.business_certificate_expiration_date)}
+                status={data.status}
                 handleUpdate={() =>
                   StartupFormModal(!Boolean(data.business_certificate_expiration_date) ? 3 : 4)
                 }

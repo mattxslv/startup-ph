@@ -1,7 +1,7 @@
 import { showModal } from 'context/modal';
 import { Button, Toast } from 'ui/components';
 import { ReactNode, SyntheticEvent, useState } from 'react';
-import { useReturnStartUp } from '../hooks/useStartUpMutate';
+import { useRejectStartUp } from '../hooks/useStartUpMutate';
 import { FormikHelpers } from 'formik';
 import { Form, InputTextArea } from 'ui/forms';
 import useAssessmentTagList from '../hooks/useAssessmentTagList';
@@ -11,6 +11,7 @@ import { TReturnStartup } from '../startup';
 interface Props {
   initialValue: TReturnStartup;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 const initialState: Omit<TReturnStartup, 'id'> = {
@@ -18,38 +19,27 @@ const initialState: Omit<TReturnStartup, 'id'> = {
   remarks: '',
 };
 
-// const validationSchema = yup
-//   .object()
-//   .shape({
-//     'assessment_tags': yup.array(),
-//     'remarks': yup.string(),
-//   })
-//   .test(
-//     'assessment_tags or remarks',
-//     'Either one reason is required',
-//     (value) => false
-//     // (has(value, 'assessment_tags') && !isEmpty(value.assessment_tags)) || has(value, 'remarks')
-//   );
-
-export const showStartupReturnModal = (
-  initialValue: Partial<TReturnStartup>
+export const showStartupRejectModal = (
+  initialValue: Partial<TReturnStartup>,
+  onSuccess?: () => void
 ) => {
   showModal({
-    id: 'startup-return',
-    title: 'Flag Application',
+    id: 'startup-reject',
+    title: 'Reject Application',
     size: 'lg',
-    component: StartupReturnModal,
+    component: StartupRejectModal,
     props: {
       initialValue: {
         ...initialState,
         ...initialValue,
       },
+      onSuccess,
     },
   });
 };
 
-function StartupReturnModal({ initialValue, onClose }: Props) {
-  const returner = useReturnStartUp();
+function StartupRejectModal({ initialValue, onClose, onSuccess }: Props) {
+  const rejecter = useRejectStartUp();
   const { isFetching, data: tagList } = useAssessmentTagList();
   const [tags, setTags] = useState<Array<string>>([]);
 
@@ -61,15 +51,23 @@ function StartupReturnModal({ initialValue, onClose }: Props) {
       Toast.error('Either one reason is required');
       return;
     }
-    payload = { remarks: payload.remarks, assessment_tags: tags };
-    returner.mutate(
+    
+    const submitPayload = { 
+      remarks: payload.remarks || '', 
+      assessment_tags: tags 
+    };
+    
+    console.log('Reject payload:', submitPayload);
+    
+    rejecter.mutate(
       {
         id: `${initialValue.id}`,
-        payload,
+        payload: submitPayload,
       },
       {
         onSuccess: () => {
           onClose();
+          onSuccess?.();
         },
         onError: (err: any) => {
           if (err?.errors) setErrors(err?.errors);
@@ -92,11 +90,10 @@ function StartupReturnModal({ initialValue, onClose }: Props) {
     <Form<TReturnStartup>
       className="space-y-4"
       initialValues={initialValue}
-      // validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
       <p className="text-sm text-gray-600">
-        Are you sure you want to disapprove this application? Select your
+        Are you sure you want to permanently reject this application? Select your
         reason.
       </p>
 
@@ -123,17 +120,17 @@ function StartupReturnModal({ initialValue, onClose }: Props) {
         <InputTextArea
           title="Reasons"
           name="remarks"
-          placeholder="What's your reason?"
+          placeholder="What's your reason for rejection?"
         />
       </label>
       <div className="grid grid-cols-2 gap-4">
-        <Button onClick={onClose} disabled={returner.isLoading}>Cancel</Button>
+        <Button onClick={onClose} disabled={rejecter.isLoading}>Cancel</Button>
         <Button
           type="submit"
-          className="bg-red-500 text-white hover:bg-red-400"
-          disabled={returner.isLoading}
+          className="bg-red-600 text-white hover:bg-red-500"
+          disabled={rejecter.isLoading}
         >
-          {returner.isLoading ? 'Processing...' : 'Return to User'}
+          {rejecter.isLoading ? 'Processing...' : 'Reject Application'}
         </Button>
       </div>
     </Form>
@@ -162,3 +159,5 @@ const LoadingWrapper = ({
     </div>
   );
 };
+
+export default StartupRejectModal;

@@ -10,7 +10,7 @@
     <p style="line-height: 140%"> </p>
     <p style="line-height: 140%">We hope this message finds you well. We would like to inform you that certain aspects of
         your submission for verification under the Philippine Startup Development Program (PSDP) have been brought to our
-        attention by the system administrator. You're application has been tagged FOR RESUBMISSION.</p>
+        attention by the system administrator. Your application has been tagged FOR RESUBMISSION.</p>
     <p style="line-height: 140%"> </p>
     <?php if($remarks || $assessmentTags): ?>
         <p style="line-height: 140%"><b>Remarks:</b></p>

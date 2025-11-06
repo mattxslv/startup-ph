@@ -9,7 +9,7 @@ import Join from '@/components/landing/Join';
 import Aos from '@/components/aos/Aos';
 import CommonHead from '@/components/partial/CommonHead';
 import NewsFeed from '@/components/landing/NewsFeed';
-import AiWidget from '@/components/ai-widget/AiWidget';
+import SimpleChatbot from '@/components/simple-chatbot/SimpleChatbot';
 
 export default function Home() {
   return (
@@ -39,7 +39,7 @@ export default function Home() {
         <Join />
       </main>
       <Footer />
-      <AiWidget />
+      <SimpleChatbot />
     </>
   );
 }

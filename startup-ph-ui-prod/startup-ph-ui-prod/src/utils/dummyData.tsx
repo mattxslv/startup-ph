@@ -36,6 +36,9 @@ export const generateDummyStartups = (page: number, limit: number) => {
     assessment_tags: [],
     business_name: `Business ${startIndex + index + 1} Corp.`,
     remarks: `Additional notes for Startup ${startIndex + index + 1}`,
+    corporation_name: `Corporation ${startIndex + index + 1}`,
+    dti_permit_number: `DTI-${2023}-${4000 + index}`,
+    sec_permit_number: `SEC-${2023}-${5000 + index}`,
     fundings: [],
     has_funding: 1,
     startup_number: `SN-${2023}-${3000 + index}`,
@@ -43,6 +46,7 @@ export const generateDummyStartups = (page: number, limit: number) => {
     business_certificate_expiration_date: '',
     business_mobile_no: '',
     slug: '',
+    status: 'UNVERIFIED',
   }));
 
   return {

@@ -11,10 +11,11 @@ import useStartupById from '../hooks/useStartupById';
 import StartUpDetails from './StartUpDetails';
 import StartupStatusBadge from './StartupStatusBadge';
 import StartUpPage from './StartUpPage';
-import { useVerifyStartUp } from '../hooks/useStartUpMutate';
+import { useVerifyStartUp, useRejectStartUp } from '../hooks/useStartUpMutate';
 import useFlagTestAccount from '../hooks/useFlagTestAccount';
 import { showStartupReturnModal } from '../modal/StartupReturnModal';
-import { HiCheckCircle, HiXCircle, HiFlag } from 'react-icons/hi';
+import { showStartupRejectModal } from '../modal/StartupRejectModal';
+import { HiCheckCircle, HiXCircle, HiFlag, HiMinusCircle } from 'react-icons/hi';
 import { Acl } from 'features/profile';
 import ProgramsParticipatedPage from './ProgramsParticipatedPage';
 
@@ -26,6 +27,7 @@ type Props = {
 function StartUpById({ id, resetSelected }: Props) {
   const { isFetching, data } = useStartupById(id);
   const verifyer = useVerifyStartUp();
+  const rejecter = useRejectStartUp();
   const flagTestAccount = useFlagTestAccount();
   
   const handleVerify = () => {
@@ -47,6 +49,10 @@ function StartUpById({ id, resetSelected }: Props) {
     });
   };
 
+  const handleReject = () => {
+    showStartupRejectModal({ id }, resetSelected);
+  };
+
   const handleToggleTestFlag = () => {
     const isCurrentlyTest = data?.is_test_account || false;
     showAlert({
@@ -64,7 +70,7 @@ function StartUpById({ id, resetSelected }: Props) {
         );
       },
       yesLabel: isCurrentlyTest ? 'Remove Flag' : 'Flag as Test',
-      variant: isCurrentlyTest ? 'primary' : 'warning',
+      variant: isCurrentlyTest ? 'primary' : 'danger',
     });
   };
   // const handleReturn = () => {
@@ -118,21 +124,39 @@ function StartUpById({ id, resetSelected }: Props) {
               )}
               <StartupStatusBadge value={data.status} />
             </div>
-            {data.status === 'FOR VERIFICATION' && (
-              <div className="flex">
+            {(() => {
+              console.log('StartUpById - Startup data:', {
+                id: data.id,
+                name: data.name,
+                status: data.status,
+                statusUpper: data.status?.toUpperCase(),
+                showButtons: data.status?.toUpperCase() === 'FOR VERIFICATION'
+              });
+              return data.status?.toUpperCase() === 'FOR VERIFICATION';
+            })() && (
+              <div className="flex w-full">
                 <Acl code={['startups-return']}>
                   <Button
-                    className="border-none min-h-min py-1 bg-gray-100 rounded-none rounded-l-sm text-gray-500 hover:bg-gray-200"
+                    className="border-none min-h-min py-2 px-4 bg-gray-100 rounded-none rounded-l-sm text-gray-700 hover:bg-gray-200 flex-1"
                     onClick={() => showStartupReturnModal({ id })}
                     leadingIcon={<HiXCircle className="h-5 w-5" />}
                   >
                     Return Application
                   </Button>
                 </Acl>
+                <Acl code={['startups-reject']}>
+                  <Button
+                    className="border-none min-h-min py-2 px-4 bg-red-600 text-white rounded-none flex-1 hover:bg-red-700"
+                    onClick={handleReject}
+                    leadingIcon={<HiMinusCircle className="h-5 w-5" />}
+                  >
+                    Reject Application
+                  </Button>
+                </Acl>
                 <Acl code={['startups-verify']}>
                   <Button
                     variant="primary"
-                    className="border-none min-h-min p-0 text-white rounded-none rounded-r-sm"
+                    className="border-none min-h-min py-2 px-4 text-white rounded-none rounded-r-sm flex-1"
                     onClick={handleVerify}
                     leadingIcon={<HiCheckCircle className="h-5 w-5" />}
                   >
@@ -143,7 +167,7 @@ function StartUpById({ id, resetSelected }: Props) {
             )}
             <Acl code={['startups-manage']}>
               <Button
-                variant={data.is_test_account ? 'primary' : 'outline'}
+                variant={data.is_test_account ? 'primary' : 'danger'}
                 size="sm"
                 className="w-full"
                 onClick={handleToggleTestFlag}
@@ -152,6 +176,62 @@ function StartUpById({ id, resetSelected }: Props) {
                 {data.is_test_account ? 'Remove Test Flag' : 'Flag as Test Account'}
               </Button>
             </Acl>
+            
+            {/* Rejection Reason Section */}
+            {data.status?.toUpperCase() === 'REJECTED' && (data.remarks || data.assessment_tags) && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-red-800 mb-2">Rejection Reason</h3>
+                
+                {data.remarks && (
+                  <div className="mb-3">
+                    <p className="text-xs text-red-700 font-medium">Remarks:</p>
+                    <p className="text-sm text-red-900">{data.remarks}</p>
+                  </div>
+                )}
+                
+                {data.assessment_tags && data.assessment_tags.length > 0 && (
+                  <div>
+                    <p className="text-xs text-red-700 font-medium mb-1">Assessment Tags:</p>
+                    <ul className="list-disc list-inside text-sm text-red-900 space-y-1">
+                      {data.assessment_tags.map((tag: any, index: number) => (
+                        <li key={index}>
+                          <span className="font-medium">{tag.description || tag.code}</span>
+                          {tag.notes && <span className="text-xs text-red-600 ml-1">- {tag.notes}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Return Reason Section */}
+            {data.status?.toUpperCase() === 'FOR RESUBMISSION' && (data.remarks || data.assessment_tags) && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-blue-800 mb-2">Return Reason</h3>
+                
+                {data.remarks && (
+                  <div className="mb-3">
+                    <p className="text-xs text-blue-700 font-medium">Remarks:</p>
+                    <p className="text-sm text-blue-900">{data.remarks}</p>
+                  </div>
+                )}
+                
+                {data.assessment_tags && data.assessment_tags.length > 0 && (
+                  <div>
+                    <p className="text-xs text-blue-700 font-medium mb-1">Assessment Tags:</p>
+                    <ul className="list-disc list-inside text-sm text-blue-900 space-y-1">
+                      {data.assessment_tags.map((tag: any, index: number) => (
+                        <li key={index}>
+                          <span className="font-medium">{tag.description || tag.code}</span>
+                          {tag.notes && <span className="text-xs text-blue-600 ml-1">- {tag.notes}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

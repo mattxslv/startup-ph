@@ -16,11 +16,18 @@ use App\Http\Controllers\Administrator\Programs\ProgramController;
 use App\Http\Controllers\Administrator\ResourcesController;
 use App\Http\Controllers\Administrator\StartupController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::prefix('administrator')->middleware('throttle:api')->group(function () {
     Route::post('authenticate', [AuthenticationController::class, 'authenticate']);
     Route::post('two_factor_authenticate', [AuthenticationController::class, 'twoFactorAuthenticate'])
         ->middleware('throttle:authenticate');
+    
+    // Test endpoint without auth
+    Route::post('test-simple', function() {
+        \Log::info('Simple test route hit');
+        return response()->json(['message' => 'Test route works']);
+    });
 
     Route::middleware(['auth:administrator', 'refresh.token', 'regional.focal'])->group(function () {
         Route::get('profile', [AuthenticationController::class, 'showProfile']);
@@ -105,6 +112,26 @@ Route::prefix('administrator')->middleware('throttle:api')->group(function () {
 
             Route::post('startups/{startup}/return', [StartupController::class, 'returnForResubmision'])
                 ->middleware('ability:startups-return');
+
+            Route::post('startups/{startup}/reject', [StartupController::class, 'reject'])
+                ->middleware('ability:startups-reject');
+            
+            Route::get('test-abilities', function(Request $request) {
+                $user = $request->user();
+                $token = $user->currentAccessToken();
+                return response()->json([
+                    'user_type' => get_class($user),
+                    'user_id' => $user->id,
+                    'token_abilities' => $token ? $token->abilities : null,
+                    'has_startups_reject' => $user->tokenCan('startups-reject'),
+                ]);
+            });
+
+            // Simple test endpoint without auth 
+            Route::post('test-simple', function() {
+                \Log::info('Simple test route hit');
+                return response()->json(['message' => 'Test route works']);
+            });
 
             Route::patch('startups/{startup}/flag-test-account', [StartupController::class, 'flagTestAccount'])
                 ->middleware('ability:startups-manage');

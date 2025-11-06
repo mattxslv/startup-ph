@@ -20,16 +20,22 @@ const validationSchema = yup.object().shape({
   founding_year: yup.string().required('Required'),
   tin: yup.string().required('Required'),
   registration_no: yup.string().required('Required'),
-  dti_permit_number: yup.string().when('sec_permit_number', {
-    is: (val: string) => !val || val.length === 0,
-    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
-    otherwise: (schema) => schema.nullable(),
-  }),
-  sec_permit_number: yup.string().when('dti_permit_number', {
-    is: (val: string) => !val || val.length === 0,
-    then: (schema) => schema.required('Either DTI or SEC permit number is required'),
-    otherwise: (schema) => schema.nullable(),
-  }),
+  dti_permit_number: yup.string().nullable().test(
+    'one-required',
+    'Either DTI or SEC permit number is required',
+    function(value) {
+      const { sec_permit_number } = this.parent;
+      return !!(value && value.trim()) || !!(sec_permit_number && sec_permit_number.trim());
+    }
+  ),
+  sec_permit_number: yup.string().nullable().test(
+    'one-required', 
+    'Either DTI or SEC permit number is required',
+    function(value) {
+      const { dti_permit_number } = this.parent;
+      return !!(value && value.trim()) || !!(dti_permit_number && dti_permit_number.trim());
+    }
+  ),
   proof_of_registration_url: yup.string().required('Required'),
   business_classification: yup.string().required('Required'),
   business_certificate_expiration_date: yup.string().required('Required'),
@@ -44,6 +50,10 @@ const Startup = ({ onClose }: IProps) => {
   const mutator = useSaveStartup();
 
   const handleSubmit = (payload: TStartup) => {
+    console.log('🚀 StartupFormModal Payload:', payload);
+    console.log('🚀 DTI Permit Number in modal:', payload.dti_permit_number);
+    console.log('🚀 SEC Permit Number in modal:', payload.sec_permit_number);
+    
     const formattedPayload = {
       ...payload,
       business_certificate_expiration_date: formatDate(
@@ -51,17 +61,33 @@ const Startup = ({ onClose }: IProps) => {
         'YYYY-MM-DD'
       ),
     };
+    
+    console.log('🚀 Formatted payload being sent:', formattedPayload);
     mutator.mutate({ payload: formattedPayload }, { onSuccess: () => onClose() });
   };
+
+  // Ensure initial values always include DTI and SEC permit fields
+  const initialValues = {
+    ...data,
+    dti_permit_number: data?.dti_permit_number || '',
+    sec_permit_number: data?.sec_permit_number || '',
+  };
+
+  console.log('🚀 StartupModal InitialValues:', initialValues);
 
   return (
     <Form
       onSubmit={handleSubmit}
-      initialValues={data}
+      initialValues={initialValues}
       validationSchema={validationSchema}
       className='flex flex-col gap-5'
     >
-      {({ dirty }) => (
+      {({ dirty, values }) => {
+        console.log('🚀 Form dirty state:', dirty);
+        console.log('🚀 Current form values DTI:', values?.dti_permit_number);
+        console.log('🚀 Current form values SEC:', values?.sec_permit_number);
+        
+        return (
         <>
           <p className='text-muted text-sm mb-3'>
             This section contains important details about your startup. It is only visible to you
@@ -105,15 +131,16 @@ const Startup = ({ onClose }: IProps) => {
               name='dti_permit_number'
               label='DTI Permit Number'
               placeholder='Enter DTI Registration Number'
-              note='Enter either DTI or SEC number (at least one is required)'
             />
 
             <Input
               name='sec_permit_number'
               label='SEC Permit Number'
               placeholder='Enter SEC Registration Number'
-              note='Enter either DTI or SEC number (at least one is required)'
             />
+          </div>
+          <div className='text-xs text-description -mt-1'>
+            Enter either DTI or SEC number (at least one is required)
           </div>
 
           <div className='flex gap-5'>
@@ -165,7 +192,8 @@ const Startup = ({ onClose }: IProps) => {
             </Button>
           </div>
         </>
-      )}
+        );
+      }}
     </Form>
   );
 };

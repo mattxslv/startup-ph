@@ -69,13 +69,13 @@ Props) {
   const { data: initProfile } = useProfile();
   const mutator = useUpdateProfile();
   const handleSubmit = (payload: IProfile) => {
-    sessionStorage.setItem('first_name', payload.first_name);
-    sessionStorage.setItem('middle_name', payload.middle_name);
-    sessionStorage.setItem('last_name', payload.last_name);
-    sessionStorage.setItem('suffix_name', payload.suffix_name);
-    sessionStorage.setItem('gender', payload.gender === 'N/A' ? '' : payload.gender);
-    sessionStorage.setItem('birth_date', payload.birth_date);
-    sessionStorage.setItem('mobile_no', payload.mobile_no);
+    sessionStorage.setItem('first_name', payload.first_name || '');
+    sessionStorage.setItem('middle_name', payload.middle_name || '');
+    sessionStorage.setItem('last_name', payload.last_name || '');
+    sessionStorage.setItem('suffix_name', payload.suffix_name || '');
+    sessionStorage.setItem('gender', payload.gender === 'N/A' ? '' : (payload.gender || ''));
+    sessionStorage.setItem('birth_date', payload.birth_date || '');
+    sessionStorage.setItem('mobile_no', payload.mobile_no || '');
     mutator.mutate(
       { payload },
       {

@@ -37,10 +37,6 @@ function SectionStartup({}: Props) {
       <div className='container mx-auto px-4'>
         {/* Section Header */}
         <div className='text-center mb-8 md:mb-12'>
-          <div className='inline-flex items-center gap-2 bg-blue-100 border border-blue-300 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4'>
-            <HiCheckCircle className='w-4 h-4 text-blue-600' />
-            <span>Government Startup Program</span>
-          </div>
           <h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
             Everything You Need to
             <span className='text-blue-600 block'>Start & Scale</span>

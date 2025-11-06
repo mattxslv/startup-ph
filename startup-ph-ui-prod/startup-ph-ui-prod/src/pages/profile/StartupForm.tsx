@@ -57,6 +57,9 @@ const getInitForm = (): TStartup => ({
   proof_of_registration_url: '',
   business_name: '',
   remarks: '',
+  corporation_name: '',
+  dti_permit_number: '',
+  sec_permit_number: '',
 
   fundings: [],
   has_funding: null,
@@ -141,12 +144,12 @@ export default function StartupForm() {
     if (isFetchingProfile) return;
     if (!profile || isEmpty(profile)) return;
     if (sessionStorage.getItem('first_name')) return;
-    sessionStorage.setItem('first_name', profile.first_name);
-    sessionStorage.setItem('middle_name', profile.middle_name);
-    sessionStorage.setItem('last_name', profile.last_name);
-    sessionStorage.setItem('gender', profile.gender);
-    sessionStorage.setItem('birth_date', profile.birth_date);
-    sessionStorage.setItem('mobile_no', profile.mobile_no);
+    sessionStorage.setItem('first_name', profile.first_name || '');
+    sessionStorage.setItem('middle_name', profile.middle_name || '');
+    sessionStorage.setItem('last_name', profile.last_name || '');
+    sessionStorage.setItem('gender', profile.gender || '');
+    sessionStorage.setItem('birth_date', profile.birth_date || '');
+    sessionStorage.setItem('mobile_no', profile.mobile_no || '');
   }, [isFetchingProfile]);
   const handleSubmit = (payload: TStartup) => {
     sessionStorage.setItem('sectors', payload.sectors.join(','));

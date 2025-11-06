@@ -8,6 +8,7 @@ export interface IFilter {
   q: string;
   status: TStartUp['status'];
   status_by: string;
+  is_test_account?: string;
 }
 
 const KEY_LABEL = {
@@ -20,6 +21,7 @@ export const INIT_FILTER_STATE: IFilter = {
   q: '',
   status: 'FOR VERIFICATION',
   status_by: 'desc',
+  is_test_account: '0', // Hide test accounts by default
 };
 
 function StartUpFilter({

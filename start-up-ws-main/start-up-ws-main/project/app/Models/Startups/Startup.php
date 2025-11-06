@@ -268,4 +268,26 @@ class Startup extends Model implements Auditable, WithFileUploadContract
 
         return $expired;
     }
+
+    /**
+     * Boot the model
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($startup) {
+            // Auto-flag test accounts on creation
+            $startup->autoFlagStartupAsTest();
+        });
+
+        static::updating(function ($startup) {
+            // Re-check test account status when relevant fields change
+            if ($startup->isDirty(['name', 'founder_name', 'organization', 'user_id'])) {
+                $startup->autoFlagStartupAsTest();
+            }
+        });
+    }
 }

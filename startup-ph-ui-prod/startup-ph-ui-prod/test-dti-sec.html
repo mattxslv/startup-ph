@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DTI/SEC Test</title>
+</head>
+<body>
+    <h1>DTI/SEC Permit Test</h1>
+    
+    <p>Recent startup entries with DTI/SEC permit numbers:</p>
+    
+    <script>
+        // Test function to check what happens with our data processing
+        function removeEmptyValues(obj) {
+            if (Array.isArray(obj)) {
+                const filteredArray = obj
+                    .map(item => removeEmptyValues(item))
+                    .filter(item => !isEmpty(item));
+                return filteredArray.length ? filteredArray : [];
+            }
+
+            if (obj !== null && typeof obj === 'object') {
+                const newObj = {};
+                for (const [key, value] of Object.entries(obj)) {
+                    const cleanedValue = removeEmptyValues(value);
+                    if (typeof value === 'number' || !isEmpty(cleanedValue)) {
+                        newObj[key] = cleanedValue;
+                    }
+                }
+                return newObj;
+            }
+
+            if (typeof obj === 'number') {
+                return obj;
+            }
+
+            return isEmpty(obj) ? {} : obj;
+        }
+
+        function isEmpty(value) {
+            if (value === null || value === undefined) {
+                return true;
+            }
+
+            if (typeof value === 'string') {
+                return value.trim() === '';
+            }
+
+            if (Array.isArray(value)) {
+                return value.length === 0;
+            }
+
+            if (typeof value === 'number') {
+                return false;
+            }
+
+            if (typeof value === 'object') {
+                return Object.keys(value).length === 0;
+            }
+
+            return false;
+        }
+
+        function payloadProject(raw) {
+            // Preserve DTI and SEC permit numbers before filtering
+            const dtiPermit = raw.dti_permit_number;
+            const secPermit = raw.sec_permit_number;
+            
+            const filteredRaw = removeEmptyValues(raw);
+            const newRaw = { ...filteredRaw };
+            delete newRaw['banner_url'];
+            delete newRaw['body'];
+            
+            // Always preserve DTI and SEC permit numbers
+            if (dtiPermit !== undefined) {
+                if (dtiPermit && dtiPermit.trim() !== '') {
+                    newRaw.dti_permit_number = dtiPermit;
+                } else {
+                    newRaw.dti_permit_number = null;
+                }
+            }
+            if (secPermit !== undefined) {
+                if (secPermit && secPermit.trim() !== '') {
+                    newRaw.sec_permit_number = secPermit;
+                } else {
+                    newRaw.sec_permit_number = null;
+                }
+            }
+            
+            const content = {};
+            if (raw.banner_url) content.banner_url = raw.banner_url;
+            if (raw.body && Object.keys(raw.body).length > 0) content.body = raw.body;
+            
+            return { ...newRaw, ...(Object.keys(content).length > 0 && { content }) };
+        }
+
+        // Test cases
+        console.log('=== Test Case 1: Both fields have values ===');
+        const test1 = {
+            name: 'Test Startup',
+            dti_permit_number: 'DTI-2025-12345',
+            sec_permit_number: 'SEC-2025-67890',
+            description: 'Test description'
+        };
+        console.log('Original:', test1);
+        console.log('Processed:', payloadProject(test1));
+
+        console.log('\n=== Test Case 2: DTI empty, SEC has value ===');
+        const test2 = {
+            name: 'Test Startup',
+            dti_permit_number: '',
+            sec_permit_number: 'SEC-2025-67890',
+            description: 'Test description'
+        };
+        console.log('Original:', test2);
+        console.log('Processed:', payloadProject(test2));
+
+        console.log('\n=== Test Case 3: DTI has value, SEC empty ===');
+        const test3 = {
+            name: 'Test Startup',
+            dti_permit_number: 'DTI-2025-12345',
+            sec_permit_number: '',
+            description: 'Test description'
+        };
+        console.log('Original:', test3);
+        console.log('Processed:', payloadProject(test3));
+
+        console.log('\n=== Test Case 4: Both fields empty ===');
+        const test4 = {
+            name: 'Test Startup',
+            dti_permit_number: '',
+            sec_permit_number: '',
+            description: 'Test description'
+        };
+        console.log('Original:', test4);
+        console.log('Processed:', payloadProject(test4));
+    </script>
+</body>
+</html>

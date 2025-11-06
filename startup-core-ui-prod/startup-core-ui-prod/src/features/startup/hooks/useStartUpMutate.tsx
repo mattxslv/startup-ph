@@ -40,18 +40,32 @@ export const useReturnStartUp = () => {
 };
 export const useRejectStartUp = () => {
   return useMutation({
-    mutationFn: async ({ id }: { id: string }) =>
-      ws.post({
+    mutationFn: async ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: Omit<TReturnStartup, 'id'>;
+    }) => {
+      console.log('useRejectStartUp - Making API call:', {
         url: `/api/v2/administrator/startups/${id}/reject`,
-        payload: {
-          remarks:
-            'Rejected by the reviewer, please check your documents and submit again.', // TODO: Make this dynamic later
-        },
-      }),
-    onSuccess: () => {
-      Toast.success('Updated!');
+        payload,
+        id,
+      });
+      
+      return ws.post({
+        url: `/api/v2/administrator/startups/${id}/reject`,
+        payload,
+      });
+    },
+    onSuccess: (_, { id }) => {
+      Toast.success('Startup Rejected Successfully!');
+      // Invalidate the specific startup query immediately
+      queryClient.invalidateQueries(['STARTUP', id]);
       setTimeout(() => {
+        queryClient.invalidateQueries(['STARTUP/list']);
         queryClient.invalidateQueries(['STARTUP/for_verification']);
+        queryClient.invalidateQueries(['STARTUP']);
       }, 500);
     },
   });

@@ -16,10 +16,22 @@ class ReturnStartupRequest extends FormRequest
     public function rules()
     {
         return [
-            'remarks' => ['nullable'],
-            'assessment_tags' => ['array'],
-            'assessment_tags.*' => ['required', Rule::exists('assessment_tags', 'code')],
+            'remarks' => ['nullable', 'string'],
+            'assessment_tags' => ['sometimes', 'array'],
+            'assessment_tags.*' => ['string', Rule::exists('assessment_tags', 'code')],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $remarks = $this->input('remarks');
+            $assessmentTags = $this->input('assessment_tags', []);
+            
+            if (empty($remarks) && empty($assessmentTags)) {
+                $validator->errors()->add('remarks', 'Either remarks or assessment tags must be provided.');
+            }
+        });
     }
 
     /**

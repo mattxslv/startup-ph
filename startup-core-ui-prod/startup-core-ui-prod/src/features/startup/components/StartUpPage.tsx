@@ -9,21 +9,23 @@ type Props = {
 };
 
 function StartupStatusBadge({ data }: Props) {
-  if (data.status === 'UNVERIFIED')
+  const normalizedStatus = data.status?.toUpperCase();
+  
+  if (normalizedStatus === 'UNVERIFIED')
     return <Badge className="-translate-y-0.5 ml-2">Unverified</Badge>;
-  if (data.status === 'FOR VERIFICATION')
+  if (normalizedStatus === 'FOR VERIFICATION')
     return (
       <Badge className="-translate-y-0.5 ml-2" variant="warning">
         In Review
       </Badge>
     );
-  if (data.status === 'FOR RESUBMISSION')
+  if (normalizedStatus === 'FOR RESUBMISSION')
     return (
       <Badge className="-translate-y-0.5 ml-2" variant="danger">
         For Resubmit
       </Badge>
     );
-  if (data.status === 'VERIFIED')
+  if (normalizedStatus === 'VERIFIED')
     return (
       <div className="inline-flex text-success-base ml-2">
         <HiCheckCircle className="translate-y-0.5" />

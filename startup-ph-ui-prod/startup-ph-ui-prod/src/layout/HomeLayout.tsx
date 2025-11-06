@@ -7,6 +7,7 @@ import { signOut } from '@/context/my-auth';
 import useProfile from '@/hooks/useProfile';
 import Button from '@/ui/button/Button';
 import Dropdown, { DropdownItem } from '@/ui/dropdown/Dropdown';
+import SimpleChatbot from '@/components/simple-chatbot/SimpleChatbot';
 import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -193,6 +194,7 @@ function HomeLayout({
       </div>
       {!noFooter && profile ? <FooterNav /> : null}
       <Footer />
+      {profile && <SimpleChatbot />}
     </TabProvider>
   );
 }

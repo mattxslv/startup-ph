@@ -19,9 +19,9 @@ const CardContent = () => {
       {
         payload: {
           ...payload,
-          first_name: payload.first_name.toUpperCase(),
-          middle_name: payload?.middle_name?.toUpperCase(),
-          last_name: payload.last_name.toUpperCase(),
+          first_name: payload.first_name?.toUpperCase() || '',
+          middle_name: payload?.middle_name?.toUpperCase() || '',
+          last_name: payload.last_name?.toUpperCase() || '',
         },
       },
       {

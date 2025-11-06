@@ -4,6 +4,7 @@ namespace App\Models\Startups\Traits;
 
 use App\Mail\FlagApplicationMail;
 use App\Mail\RequestAdditionalRequirementsMail;
+use App\Mail\StartupRejectedMail;
 use App\Mail\StartupReturnedForResubmissionMail;
 use App\Mail\StartupVerifiedMail;
 use App\Models\Startups\Enums\StartupEnum;
@@ -49,6 +50,31 @@ trait StartupAssessmentTrait
         ]);
 
         Mail::to($this->user)->queue(new StartupReturnedForResubmissionMail(
+            startup: $this,
+            remarks: $data['remarks'] ?? null,
+            assessmentTags: $data['assessment_tags'] ?? []
+        ));
+
+        return $this;
+    }
+
+    /**
+     * Reject startup
+     *
+     * @param array $data
+     * @return Startup
+     */
+    public function reject(array $data): Startup
+    {
+        $this->checkStatus(StartupEnum::STATUS['FOR VERIFICATION']);
+
+        $this->update([
+            'status' => StartupEnum::STATUS['REJECTED'],
+            ...$data
+        ]);
+
+        // Re-enabled for testing rejection emails
+        Mail::to($this->user)->queue(new StartupRejectedMail(
             startup: $this,
             remarks: $data['remarks'] ?? null,
             assessmentTags: $data['assessment_tags'] ?? []

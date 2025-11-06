@@ -41,7 +41,7 @@ export const useFileUpload = (options: UploadOptions = {}) => {
       {
         url: endpoint,
         payload: formData,
-        isUpload: true,
+        isUpload: false, // Don't use uploader instance for local Laravel API
       },
       {
         onUploadProgress: (progressEvent) => {
@@ -90,7 +90,7 @@ export const useMultipleFileUpload = (options: UploadOptions = {}) => {
         {
           url: endpoint,
           payload: formData,
-          isUpload: true,
+          isUpload: false, // Don't use uploader instance for local Laravel API
         },
         {
           onUploadProgress: (progressEvent) => {

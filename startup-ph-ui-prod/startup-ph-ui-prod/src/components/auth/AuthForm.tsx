@@ -115,16 +115,27 @@ function AuthForm() {
       { email: payload.email },
       {
         onSuccess: (res) => {
-          sessionStorage.setItem('auth_email', payload.email);
-          sessionStorage.setItem('password', payload.password);
-          sessionStorage.setItem('passConfirmation', payload.password_confirmation);
-          sessionStorage.setItem('user_type', payload.user_type || 'startup');
-
+          if (res === 'VERIFIED') {
+            // Email already exists, show error message
+            Toast.error(
+              `This email address is already registered. Please login to access your account.`
+            );
+            return;
+          }
+          
           if (res === 'UNVERIFIED') {
+            // New user, proceed with registration
+            sessionStorage.setItem('auth_email', payload.email);
+            sessionStorage.setItem('password', payload.password);
+            sessionStorage.setItem('passConfirmation', payload.password_confirmation);
+            sessionStorage.setItem('user_type', payload.user_type || 'startup');
+            
             Toast.success('A 6-Digit-PIN has been sent to your email address.');
             setState(res);
             return;
           }
+          
+          // Fallback
           setState('UNVERIFIED');
         },
         onError: (err: any) => {

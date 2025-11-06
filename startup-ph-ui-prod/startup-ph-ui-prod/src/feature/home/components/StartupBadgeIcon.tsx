@@ -22,13 +22,13 @@ function StartupBadgeAction({
   //       <Badge className='-translate-y-0.5'>Unverified</Badge>
   //     </a>
   //   );
-  if (data.status === 'FOR VERIFICATION')
+  if (data.status?.toUpperCase() === 'FOR VERIFICATION')
     return (
       <Badge className='-translate-y-0.5' variant='warning'>
         In Review
       </Badge>
     );
-  if (data.status === 'FOR RESUBMISSION')
+  if (data.status?.toUpperCase() === 'FOR RESUBMISSION')
     return (
       <button type='button' onClick={() => showAssessmentModal(data.assessment_tags, data.remarks)}>
         <Badge className='-translate-y-0.5 cursor-pointer' variant='danger'>
@@ -36,7 +36,7 @@ function StartupBadgeAction({
         </Badge>
       </button>
     );
-  if (data.status === 'VERIFIED')
+  if (data.status?.toUpperCase() === 'VERIFIED')
     return (
       <div className='inline-flex text-success'>
         <HiCheckCircle className='translate-y-0.5' />

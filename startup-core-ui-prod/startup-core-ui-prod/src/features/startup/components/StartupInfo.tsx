@@ -122,7 +122,7 @@ export const BusinessInfo = ({ data, canEdit }: BusinessInfoProps) => (
       {data.tin || '-'}
     </Info>
     <Info icon={icon10} label="Registration/Certification Permit Number">
-      {data.permit_number || '-'}
+      {data.permit_number || data.registration_no || '-'}
     </Info>
     <Info icon={icon11} label="Business Expiration Year">
       {data.business_certificate_expiration_date || '-'}
@@ -166,18 +166,39 @@ export const FundingInfo = ({ canEdit, data }: FundingInfoProps) => (
           label={`Funding Agency ${index + 1}`}
           key={funding.agency}
         >
-          {funding.document_urls.map((url) => (
-            <div className="flex items-center gap-3" key={url}>
-              {funding.agency}
-              <Link
-                target="_blank"
-                to={url}
-                className="text-primary flex items-center gap-1"
-              >
-                View Attachment <HiEye />
-              </Link>
-            </div>
-          ))}
+          {funding.document_urls.map((url) => {
+            // Clean up the URL by removing escaped slashes
+            const cleanUrl = url ? url.replace(/\\/g, '') : '';
+            const isValidUrl = cleanUrl && cleanUrl.trim();
+            const fullUrl = isValidUrl 
+              ? (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://') 
+                  ? cleanUrl 
+                  : `http://localhost:8080${cleanUrl.startsWith('/') ? cleanUrl : '/' + cleanUrl}`)
+              : null;
+            
+            const handleAttachmentClick = (e: React.MouseEvent) => {
+              if (fullUrl) {
+                // Try to open the URL and handle errors gracefully
+                window.open(fullUrl, '_blank');
+              }
+            };
+            
+            return (
+              <div className="flex items-center gap-3" key={url}>
+                {funding.agency}
+                {fullUrl ? (
+                  <button
+                    onClick={handleAttachmentClick}
+                    className="text-primary hover:text-blue-800 flex items-center gap-1 font-medium transition-colors underline cursor-pointer"
+                  >
+                    View Attachment <HiEye />
+                  </button>
+                ) : (
+                  <span className="text-gray-500 text-sm">No attachment available</span>
+                )}
+              </div>
+            );
+          })}
         </Info>
       ))
     ) : (

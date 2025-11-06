@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { useRouter } from 'next/router';
 
 export interface IProfile {
-  id?: number;
+  id?: string;
   first_name?: string;
   middle_name?: string;
   last_name?: string;
@@ -14,8 +14,26 @@ export interface IProfile {
   contact_number?: string;
   sex?: string;
   birth_date?: string;
+  birth_place?: string;
+  citizenship?: string;
+  display_name?: string;
+  email_verified_at?: string;
+  gender?: string;
+  identification_no?: string;
+  identification_type?: string;
+  identification_url?: string;
+  interests?: string;
+  mobile_no?: string;
+  mobile_no_verified_at?: string;
   photo_url?: string;
+  registered_at?: string;
+  social_classification?: string;
+  last_login_at?: string;
   user_type?: 'visitor' | 'startup' | 'enabler';
+  _is_profile_completed?: boolean;
+  _is_profile_from_sso?: boolean;
+  _is_email_verified?: boolean;
+  _is_mobile_verified?: boolean;
 }
 
 export const GENDER_OPTIONS = [
